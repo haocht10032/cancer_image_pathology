@@ -13,7 +13,7 @@
   <a class="skip" href="#main">Skip to content</a>
   <header class="masthead">
     <a class="brand" href="#main"><span class="brandmark" aria-hidden="true">A</span> Attribution Audit</a>
-    <nav aria-label="Main navigation"><a href="#protocol">Study flow</a><a href="#reproducibility">Reproduce</a><a href="https://github.com/haocht10032/cancer_image_pathology">GitHub <span aria-hidden="true">&#8599;</span></a></nav>
+    <nav aria-label="Main navigation"><a href="#protocol">Study flow</a><a href="#datasets">Datasets</a><a href="#reproducibility">Reproduce</a><a href="https://github.com/haocht10032/cancer_image_pathology">GitHub <span aria-hidden="true">&#8599;</span></a></nav>
   </header>
   <main id="main">
     <section class="demo-section" aria-labelledby="demo-title">
@@ -46,6 +46,15 @@
 python scripts/prepare_local_artifacts.py
 Rscript environment/install_reporting_packages.R
 Rscript analysis/feedback2_analysis.R</code></pre><p><a href="https://github.com/haocht10032/cancer_image_pathology#start-here-cpu-reporting-without-images-or-weights">Full setup and reporting instructions</a></p></div></section>
+    <section id="datasets" class="band" aria-labelledby="datasets-title">
+      <p class="eyebrow">DATA ACCESS</p><h2 id="datasets-title">Original datasets and alternative downloads</h2>
+      <div class="protocol-notes">
+        <div><h3>Kather-5K</h3><p>5,000 tiles &middot; 150 &times; 150 pixels &middot; eight tissue classes.</p><p><a href="https://zenodo.org/records/53169">Original Zenodo release</a><br><a href="https://www.kaggle.com/datasets/kmader/colorectal-histology-mnist">Kaggle: Colorectal Histology MNIST</a></p><p>Archive: <code>Kather_texture_2016_image_tiles_5000.zip</code></p></div>
+        <div><h3>CRC-VAL-HE-7K</h3><p>7,180 tiles &middot; 224 &times; 224 pixels &middot; nine source classes.</p><p><a href="https://zenodo.org/records/1214456">Original Zenodo release</a><br><a href="https://www.kaggle.com/datasets/imrankhan77/crc-val-he-7k">Kaggle: CRC-VAL-HE-7K</a></p><p>Archive: <code>CRC-VAL-HE-7K.zip</code>. NCT-CRC-HE-100K is not required.</p></div>
+        <div><h3>Reproduction notes</h3><p>The external analysis uses 6,588 tiles mapped to seven classes. Cite the original creators. Kaggle and Zenodo copies have not been verified as byte-identical.</p><p><a href="https://github.com/haocht10032/cancer_image_pathology/blob/main/docs/DATA_AND_MODELS.md">Folder layouts and archive checksums</a></p></div>
+      </div>
+      <p class="caption">The interactive demonstration above remains entirely synthetic and loads no dataset images.</p>
+    </section>
   </main>
   <footer><p>Haochen Tan &middot; Hanwen Henry Ye &middot; Annie Qu</p><p>Research audit, not a diagnostic tool. No patient images, model weights, uploads, or analytics are used by this demonstration.</p><a href="https://github.com/haocht10032/cancer_image_pathology/blob/main/CITATION.cff">Citation information</a></footer>
 </body>

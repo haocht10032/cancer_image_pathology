@@ -10,6 +10,7 @@ contribute to model predictions; they are not biological causes of cancer.
 
 [Explore the interactive patch-deletion lab](https://haocht10032.github.io/cancer_image_pathology/)
 | [Study workflows](docs/WORKFLOWS.md)
+| [Dataset downloads](#dataset-downloads)
 | [Reproduce the reporting](#start-here-cpu-reporting-without-images-or-weights)
 | [Citation](CITATION.cff)
 
@@ -53,6 +54,22 @@ See `docs/RELEASE_CHECKLIST.md` before making this package public.
   comparison was not supported after Holm correction.
 - Penultimate-layer within-image-mean activation patching was a negative ablation.
   No causal-ranking loss was implemented.
+
+## Dataset downloads
+
+| Dataset | Original release (preferred) | Alternative Kaggle download | Archive used by this workflow |
+| --- | --- | --- | --- |
+| Kather-5K / Colorectal Histology MNIST | [Zenodo record 53169](https://zenodo.org/records/53169), DOI [10.5281/zenodo.53169](https://doi.org/10.5281/zenodo.53169) | [kmader/colorectal-histology-mnist](https://www.kaggle.com/datasets/kmader/colorectal-histology-mnist) | `Kather_texture_2016_image_tiles_5000.zip`: 5,000 tiles, 150 x 150 pixels, eight classes |
+| CRC-VAL-HE-7K | [Zenodo record 1214456](https://zenodo.org/records/1214456), DOI [10.5281/zenodo.1214456](https://doi.org/10.5281/zenodo.1214456) | [imrankhan77/crc-val-he-7k](https://www.kaggle.com/datasets/imrankhan77/crc-val-he-7k) | `CRC-VAL-HE-7K.zip`: 7,180 tiles, 224 x 224 pixels, nine source classes |
+
+Download the named archive from each original release, not every file in the record.
+**NCT-CRC-HE-100K is not required.** The external study uses 6,588 compatible tiles
+after harmonization to seven evaluation classes, not all nine original classes.
+
+Credit the original dataset creators and publications, not just the Kaggle uploaders.
+These alternative links do not establish byte-identical copies; check the downloaded
+inventory against the saved manifests before rerunning. Images are not bundled here.
+See [data access, archive checksums, and folder layout](docs/DATA_AND_MODELS.md).
 
 ## Start here: CPU reporting without images or weights
 
