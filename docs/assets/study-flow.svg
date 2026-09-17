@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="640" viewBox="0 0 1080 640" role="img" aria-labelledby="title desc">
+  <title id="title">Generate explanations, then audit model behavior</title>
+  <desc id="desc">Three trained pipelines feed a common image-space evaluation: fully fine-tuned ResNet18 with Grad-CAM, frozen DINOv2 with gradient-weighted rollout, and frozen UNI with gradient-weighted rollout. Occlusion, ranked deletion, seed stability, and paired uncertainty quantify faithfulness. Kather uses source-group inference; CRC has no available patient IDs.</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#81968d"/></marker></defs>
+  <rect width="1080" height="640" fill="#fff"/>
+  <g font-family="Arial, Helvetica, sans-serif" fill="#192c2b">
+    <text x="26" y="28" font-size="12" font-weight="700" fill="#087f75">01 / FIX THE EVALUATION</text>
+    <rect x="26" y="45" width="1028" height="65" rx="4" fill="#f3f7f5" stroke="#d7e1de"/>
+    <text x="48" y="72" font-size="18" font-weight="700">Predefined images, source-aware splits, and explanation targets</text>
+    <text x="48" y="96" font-size="14" fill="#576968">Jointly correct / common true class; actual decisions and error targets analyzed separately</text>
+    <g fill="none" stroke="#81968d" stroke-width="1.4" marker-end="url(#arrow)"><path d="M540 110 V134 H191 V173"/><path d="M540 110 V173"/><path d="M540 134 H889 V173"/></g>
+    <text x="26" y="129" font-size="12" font-weight="700" fill="#087f75">02 / GENERATE EXPLANATIONS</text>
+    <rect x="26" y="183" width="330" height="114" rx="4" fill="#fdf6f3" stroke="#e6cbc3"/>
+    <rect x="375" y="183" width="330" height="114" rx="4" fill="#f2f7fc" stroke="#cbd9e8"/>
+    <rect x="724" y="183" width="330" height="114" rx="4" fill="#f0f8f5" stroke="#bfdbd1"/>
+    <text x="46" y="212" font-size="21" font-weight="700" fill="#ad463a">ResNet18</text>
+    <text x="46" y="237" font-size="14">Fully fine-tuned classifier</text>
+    <text x="46" y="272" font-size="17" font-weight="700">Grad-CAM</text>
+    <text x="395" y="212" font-size="21" font-weight="700" fill="#326cae">DINOv2</text>
+    <text x="395" y="237" font-size="14">Frozen encoder + trained head</text>
+    <text x="395" y="272" font-size="17" font-weight="700">Gradient-weighted rollout</text>
+    <text x="744" y="212" font-size="21" font-weight="700" fill="#087f75">UNI</text>
+    <text x="744" y="237" font-size="14">Frozen encoder + trained head</text>
+    <text x="744" y="272" font-size="17" font-weight="700">Gradient-weighted rollout</text>
+    <g fill="none" stroke="#81968d" stroke-width="1.4"><path d="M191 297 V321 H889 V297"/><path d="M540 297 V346" marker-end="url(#arrow)"/></g>
+    <text x="26" y="342" font-size="12" font-weight="700" fill="#087f75">03 / TEST THE EXPLANATIONS</text>
+    <rect x="26" y="355" width="1028" height="51" rx="4" fill="#192c2b"/>
+    <text x="540" y="387" fill="#fff" font-size="18" text-anchor="middle" font-weight="700">Common 14 x 14 image-space grid / fixed target / matched perturbation</text>
+    <g fill="none" stroke="#81968d" stroke-width="1.4" marker-end="url(#arrow)"><path d="M277 406 V435"/><path d="M803 406 V435"/></g>
+    <rect x="26" y="445" width="502" height="81" rx="4" fill="#f3f7f5" stroke="#d7e1de"/>
+    <text x="48" y="474" font-size="18" font-weight="700">Single-patch occlusion</text>
+    <text x="48" y="501" font-size="14" fill="#576968">Attribution ranks versus measured score changes</text>
+    <rect x="552" y="445" width="502" height="81" rx="4" fill="#f3f7f5" stroke="#d7e1de"/>
+    <text x="574" y="474" font-size="18" font-weight="700">Top / random / bottom deletion</text>
+    <text x="574" y="501" font-size="14" fill="#576968">Complementary scale-free and probability endpoints</text>
+    <g fill="none" stroke="#81968d" stroke-width="1.4"><path d="M277 526 V546 H803 V526"/><path d="M540 546 V568" marker-end="url(#arrow)"/></g>
+    <text x="26" y="562" font-size="12" font-weight="700" fill="#087f75">04 / QUANTIFY UNCERTAINTY</text>
+    <text x="540" y="593" font-size="18" text-anchor="middle" font-weight="700">Paired inference + cross-seed stability + cross-dataset comparison</text>
+    <text x="540" y="621" font-size="14" fill="#576968" text-anchor="middle">Kather: source-group inference. CRC: exploratory tile inference; patient IDs unavailable.</text>
+  </g>
+</svg>

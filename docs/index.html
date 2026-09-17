@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A dataset-free demonstration of patch-deletion auditing, alongside a reproducible colorectal histology attribution study.">
+  <title>Attribution Audit | Colorectal Histology</title>
+  <link rel="stylesheet" href="site.css">
+  <script defer src="toy-model.js"></script>
+  <script defer src="site.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="masthead">
+    <a class="brand" href="#main"><span class="brandmark" aria-hidden="true">A</span> Attribution Audit</a>
+    <nav aria-label="Main navigation"><a href="#protocol">Study flow</a><a href="#reproducibility">Reproduce</a><a href="https://github.com/haocht10032/cancer_image_pathology">GitHub <span aria-hidden="true">&#8599;</span></a></nav>
+  </header>
+  <main id="main">
+    <section class="demo-section" aria-labelledby="demo-title">
+      <div class="section-heading"><div><p class="eyebrow">COLorectal histology / explanation auditing</p><h1>Patch-deletion lab</h1><p class="lede">A heatmap is a hypothesis about a model. Test what happens when its highlighted regions disappear.</p></div><span class="status">Synthetic demonstration</span></div>
+      <p class="disclaimer">Educational toy model. No patient images, pathology predictions, or study results are displayed below.</p>
+      <noscript><p class="disclaimer">JavaScript is required for the interactive toy experiment. The study flow and reproducibility links remain available below.</p></noscript>
+      <div class="controls">
+        <fieldset><legend>Attribution ranking</legend><div class="segments"><label><input type="radio" name="map" value="faithful" checked><span>Faithful</span></label><label><input type="radio" name="map" value="misleading"><span>Misleading</span></label></div></fieldset>
+        <div class="control"><label for="strategy">Deletion order</label><select id="strategy"><option value="top">Highest attribution</option><option value="random">Random</option><option value="bottom">Lowest attribution</option></select></div>
+        <div class="control range-control"><label for="fraction">Patches removed <output id="fraction-label" for="fraction">20%</output></label><input id="fraction" type="range" min="0" max="100" step="1" value="20"></div>
+        <button id="new-trial" type="button">New pattern</button>
+      </div>
+      <div class="visuals">
+        <figure><figcaption><span class="number">01</span> Synthetic input <span class="minor">14 &times; 14</span></figcaption><canvas id="input-map" width="420" height="420" role="img" aria-label="Synthetic geometric input on a 14 by 14 patch grid"></canvas><p class="caption">Teal: positive weights. Coral: negative weights. Gray: zero weights.</p></figure>
+        <figure><figcaption><span class="number">02</span> Attribution <span id="map-name" class="minor">Faithful</span></figcaption><canvas id="attribution-map" width="420" height="420" role="img" aria-label="Patch attribution ranking"></canvas><div class="color-key"><span>Lower rank</span><span class="color-ramp" aria-hidden="true"></span><span>Higher rank</span></div></figure>
+        <figure><figcaption><span class="number">03</span> Intervened input <span id="removed-count" class="minor">39 / 196</span></figcaption><canvas id="deleted-map" width="420" height="420" role="img" aria-label="Synthetic input after patch deletion"></canvas><p class="caption" id="preview-note">Highest-ranked patches replaced with zero.</p></figure>
+      </div>
+      <div class="results-row">
+        <div class="chart-region"><div class="chart-heading"><h2>Deletion response</h2><ul class="legend"><li class="top">Top</li><li class="random">Random mean</li><li class="bottom">Bottom</li></ul></div><canvas id="deletion-chart" width="900" height="360" role="img" aria-label="Remaining target logit for top, random, and bottom patch deletion"></canvas><p class="caption">Lower remaining score means more damage to this target. Random: mean of 20 seeded deletion orders.</p></div>
+        <div class="readout" aria-live="polite" aria-atomic="true"><h2>Current intervention</h2><dl><div><dt>Original target logit</dt><dd id="baseline">--</dd></div><div><dt>Remaining target logit</dt><dd id="remaining">--</dd></div><div><dt>Target-logit drop</dt><dd id="drop">--</dd></div><div><dt>Map / occlusion Spearman</dt><dd id="correlation">--</dd></div></dl><p id="interpretation" class="interpretation"></p><button id="download" type="button">Download toy curves (CSV)</button></div>
+      </div>
+      <details class="model-details"><summary>Toy-model definition and limits</summary><div class="detail-body"><p><strong>Fixed target:</strong> an illustrative binary-class logit, not a tissue label.</p><p class="equation">z(x) = -0.8 + &Sigma;<sub>j</sub> w<sub>j</sub>x<sub>j</sub> &nbsp; &nbsp; &tau;<sub>j</sub> = z(x) - z(x with x<sub>j</sub> = 0) = w<sub>j</sub>x<sub>j</sub></p><p>Each synthetic patch has an intensity x and a fixed signed weight w. Positive effects support this target; negative effects inhibit it. The faithful map equals the exact single-patch effect. The misleading map is a spatial bump independent of the scoring weights. Both are ranked as signed scores, with patch-index tie breaking. Spearman uses average ranks for ties.</p><p>Deletion orders are fixed before removal; the model weights and target never change. Random orders are shared across the two maps. The slider rounds to the nearest whole patch. The additive toy has no feature interactions: it illustrates the test, not the behavior or performance of ResNet18, DINOv2, or UNI. The map colors show ranks, not calibrated effect magnitudes. The CSV contains all 197 deletion steps, including the unperturbed input.</p></div></details>
+    </section>
+    <section id="protocol" class="band" aria-labelledby="protocol-title">
+      <div class="section-heading"><div><p class="eyebrow">THE ACTUAL STUDY</p><h2 id="protocol-title">Generate an explanation. Then audit it.</h2><p class="lede">Three model-training-explanation pipelines, evaluated with complementary perturbation tests.</p></div></div>
+      <picture><source media="(max-width: 760px)" srcset="assets/study-flow-mobile.svg"><img class="workflow" src="assets/study-flow.svg" width="1080" height="640" alt="Study flow: predefined images and targets enter ResNet18 with Grad-CAM, DINOv2 with gradient-weighted rollout, or UNI with gradient-weighted rollout. Maps are compared on a common image-space grid using occlusion and ranked deletion, then analyzed with paired inference and stability checks."></picture>
+      <div class="protocol-notes"><p><strong>Kather-5K</strong><br>Source-grouped out-of-fold evaluation. Training seeds quantify training variability, not independent patients.</p><p><strong>CRC-VAL-HE-7K</strong><br>External transfer on seven harmonized classes. No tile-level patient IDs; tile-bootstrap intervals are exploratory.</p><p><strong>Interpretation</strong><br>Modest, tissue- and metric-dependent faithfulness. Highlighted regions contribute to model predictions, not biological causation.</p></div>
+    </section>
+    <section id="reproducibility" class="band" aria-labelledby="repro-title"><p class="eyebrow">FROM CLAIM TO CHECK</p><h2 id="repro-title">An inspectable analysis trail</h2><div class="audit-list"><a href="https://github.com/haocht10032/cancer_image_pathology/blob/main/docs/WORKFLOWS.md"><span class="audit-index">01</span><span><strong>Fixed protocol</strong><small>Predefined folds, target families, cohorts, and seed schedules</small></span><span aria-hidden="true">&#8599;</span></a><a href="https://github.com/haocht10032/cancer_image_pathology/tree/main/artifacts"><span class="audit-index">02</span><span><strong>Frozen evidence</strong><small>Compact predictions, image-seed metrics, and statistical outputs</small></span><span aria-hidden="true">&#8599;</span></a><a href="https://github.com/haocht10032/cancer_image_pathology/blob/main/docs/PROVENANCE.md"><span class="audit-index">03</span><span><strong>Traceable exports</strong><small>Checksums, deterministic tie handling, and documented transformations</small></span><span aria-hidden="true">&#8599;</span></a><a href="https://github.com/haocht10032/cancer_image_pathology/blob/main/docs/PACKAGE_VALIDATION.md"><span class="audit-index">04</span><span><strong>Tested reporting</strong><small>CPU reporting matched frozen headline tables; GPU runs were not repeated during packaging</small></span><span aria-hidden="true">&#8599;</span></a></div><div class="reproduce"><h3>Reproduce the tables without images or weights</h3><pre><code>python scripts/verify_publication.py
+python scripts/prepare_local_artifacts.py
+Rscript environment/install_reporting_packages.R
+Rscript analysis/feedback2_analysis.R</code></pre><p><a href="https://github.com/haocht10032/cancer_image_pathology#start-here-cpu-reporting-without-images-or-weights">Full setup and reporting instructions</a></p></div></section>
+  </main>
+  <footer><p>Haochen Tan &middot; Hanwen Henry Ye &middot; Annie Qu</p><p>Research audit, not a diagnostic tool. No patient images, model weights, uploads, or analytics are used by this demonstration.</p><a href="https://github.com/haocht10032/cancer_image_pathology/blob/main/CITATION.cff">Citation information</a></footer>
+</body>
+</html>

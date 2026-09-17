@@ -1,12 +1,42 @@
 # Colorectal histology attribution audit
 
-Publication draft for `haocht10032/cancer_image_pathology`.
+**A heatmap is a hypothesis about model behavior. We test it through controlled perturbations.**
 
 This empirical study compares ResNet18 + Grad-CAM, DINOv2 + gradient-weighted
 rollout, and UNI + gradient-weighted rollout on Kather-5K and a harmonized
 seven-class CRC-VAL-HE-7K transfer. It evaluates image-level classification and
 perturbation-based attribution faithfulness separately. Highlighted regions
 contribute to model predictions; they are not biological causes of cancer.
+
+[Explore the interactive patch-deletion lab](https://haocht10032.github.io/cancer_image_pathology/)
+| [Study workflows](docs/WORKFLOWS.md)
+| [Reproduce the reporting](#start-here-cpu-reporting-without-images-or-weights)
+| [Citation](CITATION.cff)
+
+![Workflow: three trained model-explanation pipelines, a shared image-space grid, occlusion and deletion tests, and paired uncertainty and stability analysis.](docs/assets/study-flow.svg)
+
+## A dataset-free look at faithfulness
+
+The interactive lab uses synthetic geometry and a transparent toy scoring function.
+Switch between faithful and misleading maps, remove ranked patches, and inspect the
+actual score changes. It uses no tissue images, restricted model weights, or GPU.
+**This is an educational illustration, not a pathology-model result or diagnostic tool.**
+See [the demo specification](docs/DEMO.md) for equations, controls, tests, and hosting.
+
+[![Dataset-free toy demo: synthetic patch input, attribution map, patch deletion, and computed score curves. Not pathology-model results.](docs/assets/patch-deletion-demo.png)](https://haocht10032.github.io/cancer_image_pathology/)
+
+## An inspectable analysis trail
+
+| Evidence | What you can inspect |
+| --- | --- |
+| Predefined protocol | [Folds, cohorts, target families, and workflow sequence](docs/WORKFLOWS.md) |
+| Frozen outputs | [Compact predictions and image-seed metrics](artifacts/) |
+| Traceable exports | [Checksums and documented transformations](docs/PROVENANCE.md) |
+| Tested reporting | [CPU reproduction checks and known limits](docs/PACKAGE_VALIDATION.md) |
+
+The contribution is a reproducible empirical audit, not a new model architecture.
+Differences concern model-training-explanation pipelines; they do not isolate a
+causal effect of pathology pretraining.
 
 **Release status:** prepared for author review, not a published/tagged release.
 No license, archive DOI or full dependency lock has been approved or invented.
