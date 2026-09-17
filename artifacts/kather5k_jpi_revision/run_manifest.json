@@ -1,0 +1,48 @@
+{
+  "dataset": "Kather-5K",
+  "source_groups": 10,
+  "classification_and_existing_stability_seeds": [
+    11,
+    23,
+    41,
+    57,
+    73,
+    89,
+    101,
+    131,
+    151,
+    181
+  ],
+  "new_sensitivity_seeds": [
+    11,
+    89,
+    181
+  ],
+  "new_sensitivity_seed_role": "optimization sensitivity; not biological replicates",
+  "perturbations": [
+    "normalized_zero",
+    "gaussian_blur",
+    "local_mean"
+  ],
+  "grids": [
+    "native",
+    "common_14",
+    "common_7"
+  ],
+  "random_cohort_images": 128,
+  "random_deletion_repeats": 5,
+  "random_repeat_calibration": [
+    5,
+    20
+  ],
+  "integrated_gradients_run": false,
+  "frozen_resnet_control_run": true,
+  "activation_patching_expanded": false,
+  "external_validation_started": false,
+  "external_validation_path": "CRC-VAL-HE-7K",
+  "external_validation_images": 7180,
+  "external_validation_classes": 9,
+  "external_validation_status": "pending Kather stopping rule and a frozen 8-to-9-class harmonization protocol",
+  "stopping_rule": "If all three-seed sensitivity directions agree with the primary result, stop. If one axis materially reverses the ranking, expand only that axis to 10 seeds.",
+  "interpretation": "attribution marks model-prediction contribution, not biological causation"
+}

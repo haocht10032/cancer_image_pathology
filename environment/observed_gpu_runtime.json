@@ -1,0 +1,15 @@
+{
+  "source": "executed notebook 14 and final v5 partition metadata",
+  "python": "3.9.21",
+  "torch": "2.8.0+cu129",
+  "numpy": "1.26.4",
+  "cuda_runtime": "12.9",
+  "cudnn_version_integer": 91002,
+  "gpu": "NVIDIA A40",
+  "matmul_tf32": false,
+  "cudnn_tf32": true,
+  "cudnn_deterministic": true,
+  "cudnn_benchmark": false,
+  "complete_environment_lock": false,
+  "note": "Other package versions must be exported from the original online environment before final release. Do not substitute local inspection-environment versions as original training versions."
+}

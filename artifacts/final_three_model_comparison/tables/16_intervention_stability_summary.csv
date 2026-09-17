@@ -1,0 +1,3 @@
+method,pairwise_prediction_agreement,mean_predicted_class_spearman_same_prediction,mean_common_true_class_spearman
+gradient_attention_rollout,0.9467320261437909,0.9238651002558822,0.9257319627220222
+intervention_activation_patch,0.9467320261437909,0.6991245536544772,0.6994270521174082

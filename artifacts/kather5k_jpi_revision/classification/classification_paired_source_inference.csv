@@ -1,0 +1,4 @@
+model_a,model_b,metric,difference_definition,images,source_groups,mean_difference,hierarchical_ci_low,hierarchical_ci_high,source_sign_flip_estimate,source_sign_flip_p,source_sign_flip_type
+UNI,DINOv2,accuracy,model_a_minus_model_b,5000,10,0.06182000000000001,0.026918433718297347,0.09484963081446682,0.07213361896036224,0.00390625,exact
+UNI,FrozenResNet18,accuracy,model_a_minus_model_b,5000,10,0.06562,0.011922401266312702,0.11763213345137313,0.08394050092117195,0.00390625,exact
+UNI,ResNet18,accuracy,model_a_minus_model_b,5000,10,0.010379999999999999,-0.029146859038236796,0.04819396898175756,0.026467786914327506,0.109375,exact

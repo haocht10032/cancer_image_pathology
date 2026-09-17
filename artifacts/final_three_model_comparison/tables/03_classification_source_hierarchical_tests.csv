@@ -1,0 +1,4 @@
+comparison,model_a,model_b,metric,paired_source_seed_rows,source_group_count,mean_paired_difference,hierarchical_bootstrap_ci_low,hierarchical_bootstrap_ci_high,wilcoxon_statistic,wilcoxon_p_value,wilcoxon_p_holm,significant_holm_0.05,hierarchical_ci_excludes_zero,supported_by_paired_and_hierarchical
+ResNet18 - DINOv2,ResNet18,DINOv2,source_accuracy,100,10,0.045665832046034714,0.022403776275106303,0.06850152471597742,425.0,8.360229655366044e-13,1.6720459310732087e-12,True,True,True
+ResNet18 - UNI,ResNet18,UNI,source_accuracy,100,10,-0.026467786914327506,-0.05348941893949202,0.006817103971605849,750.5,8.179652908165796e-09,8.179652908165796e-09,True,False,False
+DINOv2 - UNI,DINOv2,UNI,source_accuracy,100,10,-0.07213361896036222,-0.09263075217721241,-0.04658524080904992,326.0,4.002252049477952e-14,1.2006756148433855e-13,True,True,True

@@ -1,0 +1,5 @@
+metric,model_a,model_b,image_count,source_group_count,mean_difference,hierarchical_ci_low,hierarchical_ci_high,wilcoxon_p_holm,source_sign_flip_p_holm
+attribution_occlusion_spearman,UNI,ResNet18,187,10,0.118138517511338,0.03562860841305224,0.19264775350403388,7.113508170113365e-7,0.029296875
+attribution_occlusion_spearman,UNI,DINOv2,187,10,0.07872933730080256,0.01616765723005022,0.13954794183422475,1.5857964378271e-4,0.03125
+top_minus_random_relative_target_logit_reduction_auc,UNI,ResNet18,187,10,0.19097067166348283,0.16478596861814457,0.22064064379183904,7.506268607421437e-31,0.005859375
+top_minus_random_relative_target_logit_reduction_auc,UNI,DINOv2,187,10,0.03431661564849746,0.01392774805229945,0.05474338731066896,3.575408306066459e-6,0.01171875

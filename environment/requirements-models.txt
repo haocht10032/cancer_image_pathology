@@ -1,0 +1,18 @@
+# Recorded key versions, NOT a complete original-environment lockfile.
+# Install a PyTorch build appropriate to the machine/driver using official instructions.
+torch==2.8.0
+numpy==1.26.4
+torchvision
+pandas
+Pillow
+scipy
+scikit-learn
+timm>=0.9.8
+huggingface_hub
+matplotlib
+seaborn
+tqdm
+jupyterlab
+ipykernel
+nbformat
+# Historical MaskCut CRF is optional and may require a separate pydensecrf installation.

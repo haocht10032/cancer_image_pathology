@@ -1,0 +1,8 @@
+{
+  "sha256": "76196e99911637e4232fcf6b29e3dbbfcd2d99acdc87b55335796f29bbc25b8a",
+  "image_count": 272,
+  "class_count": 8,
+  "source_group_count": 10,
+  "selection_used_attribution_results": false,
+  "note": "This manifest was selected from OOF labels, predictions, confidence, class, and source group only."
+}

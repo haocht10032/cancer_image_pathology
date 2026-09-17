@@ -1,0 +1,29 @@
+{
+  "models": [
+    "CNN",
+    "UNI"
+  ],
+  "seeds": [
+    11,
+    23,
+    41,
+    57,
+    73,
+    89,
+    101,
+    131,
+    151,
+    181
+  ],
+  "class_names": [
+    "01_TUMOR",
+    "02_STROMA",
+    "03_COMPLEX",
+    "04_LYMPHO",
+    "05_DEBRIS",
+    "06_MUCOSA",
+    "07_ADIPOSE",
+    "08_EMPTY"
+  ],
+  "aggregate_oof_images_per_model_seed": 5000
+}

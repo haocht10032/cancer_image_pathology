@@ -1,0 +1,42 @@
+{
+  "seed": 41,
+  "device": "cuda",
+  "class_names": [
+    "01_TUMOR",
+    "02_STROMA",
+    "03_COMPLEX",
+    "04_LYMPHO",
+    "05_DEBRIS",
+    "06_MUCOSA",
+    "07_ADIPOSE",
+    "08_EMPTY"
+  ],
+  "split_cases": {
+    "test": [
+      "CRC-Prim-HE-01",
+      "CRC-Prim-HE-02"
+    ],
+    "train": [
+      "CRC-Prim-HE-04",
+      "CRC-Prim-HE-05",
+      "CRC-Prim-HE-06",
+      "CRC-Prim-HE-07",
+      "CRC-Prim-HE-08",
+      "CRC-Prim-HE-10"
+    ],
+    "validation": [
+      "CRC-Prim-HE-03",
+      "CRC-Prim-HE-09"
+    ]
+  },
+  "scratch": {
+    "epochs": 40,
+    "batch_size": 64,
+    "learning_rate": 0.001
+  },
+  "resnet18": {
+    "epochs": 20,
+    "batch_size": 32,
+    "learning_rate": 0.0001
+  }
+}

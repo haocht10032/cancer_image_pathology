@@ -1,0 +1,4 @@
+"model","image_seed_observations","unique_images","finite_correlations"
+"DINOv2",106,48,106
+"ResNet18",106,48,106
+"UNI",106,48,106

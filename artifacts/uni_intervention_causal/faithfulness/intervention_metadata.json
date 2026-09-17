@@ -1,0 +1,16 @@
+{
+  "model": "UNI",
+  "classifier_training_changed": false,
+  "cohort_changed": false,
+  "intervention_layer_requested": -2,
+  "intervention_layer_index": 22,
+  "intervention_layer_number_one_based": 23,
+  "transformer_block_count": 24,
+  "replacement": "image_patch_mean",
+  "replacement_definition": "mean contextualized patch-token activation from the same image at the intervention layer",
+  "interventions_independent": true,
+  "effect_definition": "baseline target-class logit minus target-class logit after replacing one contextualized patch token",
+  "positive_effect_interpretation": "the original patch token supports the model target score relative to the within-image mean replacement",
+  "negative_effect_interpretation": "the original patch token suppresses the model target score relative to the within-image mean replacement",
+  "biological_causality_claimed": false
+}

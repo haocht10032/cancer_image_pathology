@@ -1,0 +1,4 @@
+model,rows,defined,images
+DINOv2,294,294,98
+ResNet18,294,293,98
+UNI,294,294,98

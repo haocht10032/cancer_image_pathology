@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "Please cite the archived software release and associated manuscript when available. This is an unversioned publication draft."
+type: software
+title: "Colorectal Histology Attribution Audit"
+authors:
+  - family-names: Tan
+    given-names: Haochen
+  - family-names: Ye
+    given-names: Hanwen Henry
+  - family-names: Qu
+    given-names: Annie
+repository-code: "https://github.com/haocht10032/cancer_image_pathology"
+abstract: "An empirical audit of classification and patch-attribution faithfulness across Kather-5K and CRC-VAL-HE-7K, comparing ResNet18, DINOv2 and UNI pipelines."
+keywords:
+  - computational pathology
+  - attribution faithfulness
+  - colorectal histology
+  - reproducibility

@@ -1,0 +1,14 @@
+{
+  "sha256": "7478a819f806f54843e2e4d2982245b72655171d1dfe7492191042a22518a19d",
+  "image_count": 128,
+  "class_count": 8,
+  "source_group_count": 10,
+  "selection_seed": 314159,
+  "selection_used_predictions": false,
+  "selection_used_attributions": false,
+  "selection_variables": [
+    "class",
+    "source_group",
+    "random_seed"
+  ]
+}

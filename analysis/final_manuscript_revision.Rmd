@@ -1,0 +1,388 @@
+---
+title: "Final manuscript revision outputs"
+output: md_document
+params:
+  bootstrap_iterations: 5000
+  bootstrap_seed: 2027
+---
+
+This analysis uses only saved model outputs. It regenerates the scale-free Kather
+summary and the external confusion-matrix supplement without training or inference.
+
+```{r setup, message=FALSE, warning=FALSE}
+library(dplyr)
+library(tidyr)
+library(readr)
+library(ggplot2)
+library(scales)
+
+if (!exists("params")) {
+  params <- list(bootstrap_iterations = 5000, bootstrap_seed = 2027)
+}
+
+locate_project_root <- function(start = getwd()) {
+  current <- normalizePath(start, mustWork = TRUE)
+  repeat {
+    if (dir.exists(file.path(current, "artifacts")) &&
+        dir.exists(file.path(current, "analysis"))) return(current)
+    parent <- dirname(current)
+    if (identical(parent, current)) stop("Could not locate project root")
+    current <- parent
+  }
+}
+
+project_root <- locate_project_root()
+paper_root <- file.path(project_root, "analysis")
+output_root <- file.path(paper_root, "manuscript_revision_outputs")
+figure_root <- file.path(paper_root, "manuscript_figures")
+dir.create(output_root, recursive = TRUE, showWarnings = FALSE)
+dir.create(figure_root, recursive = TRUE, showWarnings = FALSE)
+
+model_order <- c("ResNet18", "DINOv2", "UNI")
+model_colors <- c(ResNet18 = "#3568A8", DINOv2 = "#D17818", UNI = "#21896E")
+theme_set(theme_minimal(base_size = 11) +
+  theme(
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(face = "bold"),
+    legend.position = "none"
+  ))
+```
+
+```{r helpers}
+hierarchical_mean_ci <- function(frame, value_column, iterations, seed) {
+  image_values <- frame |>
+    group_by(case_id, cohort_id) |>
+    summarise(value = mean(.data[[value_column]], na.rm = TRUE), .groups = "drop") |>
+    filter(is.finite(value))
+  sources <- unique(image_values$case_id)
+  set.seed(seed)
+  estimates <- replicate(iterations, {
+    sampled_sources <- sample(sources, length(sources), replace = TRUE)
+    sampled_values <- unlist(lapply(sampled_sources, function(source) {
+      source_values <- image_values$value[image_values$case_id == source]
+      sample(source_values, length(source_values), replace = TRUE)
+    }))
+    mean(sampled_values)
+  })
+  tibble(
+    mean = mean(image_values$value),
+    ci_low = unname(quantile(estimates, 0.025)),
+    ci_high = unname(quantile(estimates, 0.975)),
+    images = n_distinct(image_values$cohort_id),
+    source_groups = n_distinct(image_values$case_id)
+  )
+}
+```
+
+## Scale-free Kather primary analysis
+
+```{r kather-primary}
+kather_root <- file.path(project_root, "artifacts", "kather5k_jpi_revision")
+image_seed <- read_csv(
+  file.path(kather_root, "evaluation/consolidated/image_seed_metrics.csv"),
+  show_col_types = FALSE
+)
+paired_tests <- read_csv(
+  file.path(kather_root, "statistics/paired_model_tests.csv"),
+  show_col_types = FALSE
+)
+top_random <- read_csv(
+  file.path(kather_root, "statistics/paired_top_vs_random.csv"),
+  show_col_types = FALSE
+)
+
+primary <- image_seed |>
+  filter(
+    cohort_name == "selected_faithfulness",
+    analysis_family == "primary_jointly_correct_true_class",
+    target_role == "true_class",
+    perturbation == "normalized_zero",
+    grid_label == "common_14",
+    (model == "ResNet18" & method == "gradcam") |
+      (model %in% c("DINOv2", "UNI") & method == "gradient_attention_rollout")
+  )
+
+stopifnot(n_distinct(primary$seed) == 3, n_distinct(primary$case_id) == 10)
+
+metric_map <- c(
+  attribution_occlusion_spearman = "Attribution-occlusion Spearman",
+  top_minus_random_relative_target_logit_reduction_auc =
+    "Relative target-logit top-minus-random AUC"
+)
+
+metric_ci <- bind_rows(lapply(seq_along(metric_map), function(metric_index) {
+  metric <- names(metric_map)[metric_index]
+  bind_rows(lapply(seq_along(model_order), function(model_index) {
+    model <- model_order[model_index]
+    hierarchical_mean_ci(
+      filter(primary, .data$model == .env$model), metric,
+      params$bootstrap_iterations,
+      params$bootstrap_seed + 100L * metric_index + model_index
+    ) |>
+      mutate(model = .env$model, metric = unname(metric_map[[metric]]))
+  }))
+}))
+
+top_beats <- top_random |>
+  filter(
+    cohort_name == "selected_faithfulness",
+    analysis_family == "primary_jointly_correct_true_class",
+    perturbation == "normalized_zero",
+    grid_label == "common_14",
+    metric == "top_minus_random_relative_target_logit_reduction_auc",
+    model %in% model_order
+  ) |>
+  transmute(
+    model,
+    metric = "Fraction: top deletion beats random",
+    mean = proportion_top_beats_random,
+    ci_low = NA_real_, ci_high = NA_real_,
+    images, source_groups
+  )
+
+primary_table <- metric_ci |>
+  select(model, metric, mean) |>
+  bind_rows(select(top_beats, model, metric, mean)) |>
+  pivot_wider(names_from = metric, values_from = mean) |>
+  mutate(model = factor(model, levels = model_order)) |>
+  arrange(model)
+
+write_csv(primary_table, file.path(output_root, "table_kather_scale_free_primary.csv"))
+
+scale_free_pairwise <- paired_tests |>
+  filter(
+    cohort_name == "selected_faithfulness",
+    analysis_family == "primary_jointly_correct_true_class",
+    method_family == "architecture_primary",
+    perturbation == "normalized_zero",
+    grid_label == "common_14",
+    metric %in% names(metric_map),
+    model_a == "UNI"
+  ) |>
+  select(
+    metric, model_a, model_b, image_count, source_group_count,
+    mean_difference, hierarchical_ci_low, hierarchical_ci_high,
+    wilcoxon_p_holm, source_sign_flip_p_holm
+  )
+write_csv(scale_free_pairwise, file.path(output_root, "table_kather_scale_free_pairwise.csv"))
+
+plot_data <- bind_rows(metric_ci, top_beats) |>
+  mutate(
+    model = factor(model, levels = model_order),
+    metric = factor(metric, levels = c(
+      "Attribution-occlusion Spearman",
+      "Relative target-logit top-minus-random AUC",
+      "Fraction: top deletion beats random"
+    ))
+  )
+
+primary_plot <- ggplot(plot_data, aes(model, mean, color = model)) +
+  geom_hline(yintercept = 0, linewidth = 0.35, linetype = "dashed", color = "grey50") +
+  geom_errorbar(
+    aes(ymin = ci_low, ymax = ci_high), width = 0.14, linewidth = 0.65,
+    na.rm = TRUE
+  ) +
+  geom_point(size = 2.8) +
+  facet_wrap(~metric, scales = "free_y", nrow = 1) +
+  scale_color_manual(values = model_colors) +
+  labs(
+    x = NULL, y = NULL,
+    title = "Primary Kather-5K faithfulness uses scale-free cross-model evidence",
+    subtitle = paste0(
+      "Image-level means across seeds 11, 89, and 181; intervals are ",
+      "source-group hierarchical 95% CIs (", params$bootstrap_iterations, " resamples)"
+    )
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 18, hjust = 1),
+    strip.text = element_text(face = "bold"),
+    plot.subtitle = element_text(size = 9)
+  )
+
+ggsave(
+  file.path(figure_root, "figure_05_kather_scale_free_faithfulness.pdf"),
+  primary_plot, width = 10.4, height = 3.7
+)
+ggsave(
+  file.path(figure_root, "figure_05_kather_scale_free_faithfulness.png"),
+  primary_plot, width = 10.4, height = 3.7, dpi = 320
+)
+```
+
+## Secondary raw-score deletion trajectories
+
+```{r raw-deletion-secondary}
+legacy_curves <- read_csv(
+  file.path(
+    project_root, "artifacts", "dinov2_three_model", "faithfulness",
+    "three_model_deletion_curves.csv"
+  ),
+  show_col_types = FALSE
+) |>
+  filter(target_role == "predicted", fraction_removed <= 0.30)
+
+curve_metrics <- c(
+  target_class_logit_drop = "Target-class logit decrease",
+  target_margin_drop = "Classification-margin decrease"
+)
+
+curve_summary <- bind_rows(lapply(seq_along(curve_metrics), function(metric_index) {
+  metric <- names(curve_metrics)[metric_index]
+  groups <- legacy_curves |>
+    distinct(model, strategy, fraction_removed) |>
+    arrange(model, strategy, fraction_removed)
+  bind_rows(lapply(seq_len(nrow(groups)), function(group_index) {
+    key <- groups[group_index, ]
+    frame <- legacy_curves |>
+      filter(
+        model == key$model,
+        strategy == key$strategy,
+        fraction_removed == key$fraction_removed
+      )
+    hierarchical_mean_ci(
+      frame, metric, params$bootstrap_iterations,
+      params$bootstrap_seed + 1000L * metric_index + group_index
+    ) |>
+      mutate(
+        model = key$model,
+        strategy = key$strategy,
+        fraction_removed = key$fraction_removed,
+        metric = unname(curve_metrics[[metric]])
+      )
+  }))
+}))
+
+curve_plot <- curve_summary |>
+  mutate(
+    model = factor(model, levels = model_order),
+    strategy = factor(strategy, levels = c("top", "random", "bottom")),
+    metric = factor(metric, levels = unname(curve_metrics))
+  ) |>
+  ggplot(aes(fraction_removed, mean, color = strategy, fill = strategy)) +
+  geom_ribbon(aes(ymin = ci_low, ymax = ci_high), alpha = 0.13, linewidth = 0) +
+  geom_line(linewidth = 0.8) +
+  facet_grid(metric ~ model, scales = "free_y") +
+  scale_x_continuous(labels = percent_format(accuracy = 1), breaks = c(0, .1, .2, .3)) +
+  scale_color_manual(values = c(top = "#B33A3A", random = "#555555", bottom = "#3B75AF")) +
+  scale_fill_manual(values = c(top = "#B33A3A", random = "#555555", bottom = "#3B75AF")) +
+  labs(
+    x = "Image regions deleted", y = NULL, color = "Deletion order", fill = "Deletion order",
+    title = "Secondary within-model raw-score deletion diagnostics",
+    subtitle = paste0(
+      "Reference seed 41; source-group hierarchical 95% CIs (",
+      params$bootstrap_iterations, " resamples). Magnitudes are not compared across architectures."
+    )
+  ) +
+  theme(
+    legend.position = "bottom",
+    strip.text = element_text(face = "bold"),
+    plot.subtitle = element_text(size = 9)
+  )
+
+ggsave(
+  file.path(figure_root, "figure_06_logit_margin_deletion_curves.pdf"),
+  curve_plot, width = 10.8, height = 6.1
+)
+ggsave(
+  file.path(figure_root, "figure_06_logit_margin_deletion_curves.png"),
+  curve_plot, width = 10.8, height = 6.1, dpi = 320
+)
+```
+
+## External confusion matrices and class counts
+
+```{r external-supplement}
+external_root <- file.path(
+  project_root, "artifacts", "crc_val_external", "common_seven", "classification"
+)
+confusion <- read_csv(
+  file.path(external_root, "confusion_matrices_long.csv"), show_col_types = FALSE
+) |>
+  group_by(model, true_class, predicted_class) |>
+  summarise(row_proportion = mean(row_proportion), .groups = "drop")
+
+external_counts <- read_csv(
+  file.path(external_root, "external_class_counts.csv"), show_col_types = FALSE
+) |>
+  group_by(class_name) |>
+  summarise(images = sum(images), source_folders = paste(source_class, collapse = "+"),
+            .groups = "drop") |>
+  arrange(match(class_name, c(
+    "tumor", "stroma", "lymphocytes", "adipose", "background",
+    "normal_mucosa", "debris_mucus"
+  )))
+write_csv(external_counts, file.path(output_root, "table_external_common_seven_counts.csv"))
+
+class_order <- c(
+  "tumor", "stroma", "lymphocytes", "adipose", "background",
+  "normal_mucosa", "debris_mucus"
+)
+class_labels <- c(
+  tumor = "Tumor", stroma = "Stroma", lymphocytes = "Lymphocytes",
+  adipose = "Adipose", background = "Background",
+  normal_mucosa = "Normal mucosa", debris_mucus = "Debris/mucus"
+)
+
+confusion <- confusion |>
+  mutate(
+    model = factor(model, levels = model_order),
+    true_class = factor(true_class, levels = rev(class_order), labels = rev(class_labels)),
+    predicted_class = factor(predicted_class, levels = class_order, labels = class_labels)
+  )
+
+confusion_plot <- ggplot(confusion, aes(predicted_class, true_class, fill = row_proportion)) +
+  geom_tile(color = "white", linewidth = 0.35) +
+  geom_text(
+    aes(label = ifelse(row_proportion >= 0.005, percent(row_proportion, accuracy = 1), "")),
+    size = 2.15, color = ifelse(confusion$row_proportion > 0.55, "white", "#202020")
+  ) +
+  facet_wrap(~model, nrow = 1) +
+  scale_fill_gradientn(
+    colors = c("#F7F7F5", "#C9D9DD", "#4D8B8D", "#173F4A"),
+    limits = c(0, 1), labels = percent_format(accuracy = 1)
+  ) +
+  coord_equal() +
+  labs(
+    x = "Predicted class", y = "True class", fill = "Row %",
+    title = "CRC-VAL-HE-7K coarse-label external confusion matrices",
+    subtitle = "Row-normalized proportions averaged across seeds 11, 89, and 181"
+  ) +
+  theme(
+    legend.position = "right",
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+    axis.text.y = element_text(size = 8),
+    strip.text = element_text(face = "bold")
+  )
+
+ggsave(
+  file.path(figure_root, "figure_s_external_confusion.pdf"),
+  confusion_plot, width = 11.2, height = 4.6
+)
+ggsave(
+  file.path(figure_root, "figure_s_external_confusion.png"),
+  confusion_plot, width = 11.2, height = 4.6, dpi = 320
+)
+```
+
+## Audit metadata
+
+```{r audit}
+repeat_calibration <- read_csv(
+  file.path(kather_root, "calibration/random_repeat_summary.csv"),
+  show_col_types = FALSE
+)
+write_csv(repeat_calibration, file.path(output_root, "table_random_repeat_calibration.csv"))
+
+audit <- tibble(
+  item = c(
+    "bootstrap_iterations", "bootstrap_seed", "sensitivity_seeds",
+    "source_groups", "primary_images", "random_deletion_repeats_revision_external"
+  ),
+  value = c(
+    as.character(params$bootstrap_iterations), as.character(params$bootstrap_seed),
+    "11,89,181", "10", "187", "5"
+  )
+)
+write_csv(audit, file.path(output_root, "manuscript_revision_audit.csv"))
+audit
+```

@@ -1,0 +1,2 @@
+"cohort_id","model","seed","class_name","target_role","analysis_family","all_models_correct"
+"ee8856c731ec4e6f","ResNet18",181,"debris_mucus","common_true_class","all_image_true_class_sensitivity","False"

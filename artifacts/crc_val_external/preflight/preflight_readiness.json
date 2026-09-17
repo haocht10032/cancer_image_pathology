@@ -1,0 +1,14 @@
+{
+  "protocol_version": "2026-08-27-jpi-v1",
+  "dataset_images": 7180,
+  "dataset_classes": 9,
+  "inventory_sha256": "8f913ea075528c474fe9b16655cb4ff0f88e497e177f011a6211f6a071c1f8aa",
+  "patient_metadata_available": false,
+  "inference_level": "tile_level_exploratory",
+  "ready_for_confirmatory_patient_inference": false,
+  "native_cohort_images": 108,
+  "native_cohort_sha256": "fda31729b34daa88f3db60d6ce764a520ed5576a31a3dd6e7e0149aff6568d4a",
+  "coarse_cohort_images": 98,
+  "coarse_cohort_sha256": "ecae27481209ee29937ce557d72ba54258dc3150a77aebbf861b2d078fb01e27",
+  "external_predictions_examined": false
+}

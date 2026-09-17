@@ -1,0 +1,2 @@
+paired_seeds,rgb_mean_accuracy,mask_mean_accuracy,mean_paired_improvement,median_paired_improvement,mean_improvement_95ci_low,mean_improvement_95ci_high,seeds_improved
+10,0.7446715328467153,0.6910948905109489,-0.05357664233576642,-0.024087591240875894,-0.10715328467153284,-0.004963503649635015,3

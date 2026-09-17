@@ -1,0 +1,68 @@
+{
+  "protocol_version": "2026-08-27-jpi-v1",
+  "external_dataset": {
+    "name": "CRC-VAL-HE-7K",
+    "online_path": "CRC-VAL-HE-7K",
+    "expected_images": 7180,
+    "expected_dimensions": [224, 224],
+    "published_patient_count": 50,
+    "patient_manifest_required_for_confirmatory_inference": true
+  },
+  "models": {
+    "ResNet18": "gradcam",
+    "DINOv2": "gradient_attention_rollout",
+    "UNI": "gradient_attention_rollout"
+  },
+  "training_seeds": [11, 89, 181],
+  "cohort_selection_seed": 2027,
+  "primary_native_replication": {
+    "status": "deferred_storage_unavailable",
+    "training_dataset": "NCT-CRC-HE-100K",
+    "classes": ["ADI", "BACK", "DEB", "LYM", "MUC", "MUS", "NORM", "STR", "TUM"],
+    "images_per_attribution_class": 12
+  },
+  "secondary_coarse_transfer": {
+    "status": "active",
+    "training_dataset": "Kather-5K",
+    "excluded_kather_classes": ["03_COMPLEX"],
+    "excluded_external_classes": ["MUS"],
+    "external_to_common": {
+      "ADI": "adipose",
+      "BACK": "background",
+      "DEB": "debris_mucus",
+      "LYM": "lymphocytes",
+      "MUC": "debris_mucus",
+      "NORM": "normal_mucosa",
+      "STR": "stroma",
+      "TUM": "tumor"
+    },
+    "kather_to_common": {
+      "01_TUMOR": "tumor",
+      "02_STROMA": "stroma",
+      "04_LYMPHO": "lymphocytes",
+      "05_DEBRIS": "debris_mucus",
+      "06_MUCOSA": "normal_mucosa",
+      "07_ADIPOSE": "adipose",
+      "08_EMPTY": "background"
+    },
+    "images_per_attribution_class": 14
+  },
+  "faithfulness": {
+    "evaluation_grid": 14,
+    "perturbation": "normalized_zero",
+    "deletion_fractions": [0.0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5],
+    "random_deletion_repeats": 5,
+    "primary_metrics": [
+      "attribution_occlusion_spearman",
+      "top_minus_random_relative_target_logit_reduction_auc",
+      "top_beats_random_target_logit"
+    ]
+  },
+  "inference": {
+    "primary_cluster": "patient_id",
+    "seed_rows_are_biological_replicates": false,
+    "bootstrap": "patient_first_then_image",
+    "paired_test": "wilcoxon_signed_rank",
+    "multiple_testing": "holm"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "causal_ranking_regularization_justified": false,
+  "training_loss_implemented_in_this_experiment": false,
+  "required_mean_spearman_gain": 0.05,
+  "observed_mean_spearman_gain": -0.05979225658955305,
+  "spearman_statistically_supported": false,
+  "target_logit_deletion_statistically_supported": false,
+  "margin_deletion_statistically_supported": false,
+  "decision_rule": "mean Spearman gain >= 0.05 with Holm-adjusted one-sided Wilcoxon p < 0.05 and positive source-group hierarchical CI, plus supported improvement in at least one top-minus-random deletion endpoint"
+}

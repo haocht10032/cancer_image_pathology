@@ -1,0 +1,31 @@
+{
+  "source_cohort_path": "artifacts/grouped_oof_faithfulness/faithfulness_cohort_manifest.csv",
+  "source_cohort_sha256": "76196e99911637e4232fcf6b29e3dbbfcd2d99acdc87b55335796f29bbc25b8a",
+  "source_cohort_metadata": {
+    "sha256": "76196e99911637e4232fcf6b29e3dbbfcd2d99acdc87b55335796f29bbc25b8a",
+    "image_count": 272,
+    "class_count": 8,
+    "source_group_count": 10,
+    "selection_used_attribution_results": false,
+    "note": "This manifest was selected from OOF labels, predictions, confidence, class, and source group only."
+  },
+  "reference_seed": 41,
+  "stability_seeds": [
+    11,
+    23,
+    41,
+    57,
+    73,
+    89,
+    101,
+    131,
+    151,
+    181
+  ],
+  "classifier_checkpoints_reused": true,
+  "data_split_changed": false,
+  "classifier_training_changed": false,
+  "cohort_selection_changed": false,
+  "intervention_layer": -2,
+  "replacement": "image_patch_mean"
+}

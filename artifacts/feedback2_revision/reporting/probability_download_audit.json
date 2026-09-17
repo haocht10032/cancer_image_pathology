@@ -1,0 +1,40 @@
+{
+  "status": "passed",
+  "counts": [
+    {
+      "dataset": "kather",
+      "partitions": 90,
+      "metric_rows": 2442,
+      "unique_image_seed_model_targets": 2442,
+      "images": 276,
+      "seeds": [
+        11,
+        89,
+        181
+      ],
+      "models": [
+        "DINOv2",
+        "ResNet18",
+        "UNI"
+      ]
+    },
+    {
+      "dataset": "crc",
+      "partitions": 9,
+      "metric_rows": 1200,
+      "unique_image_seed_model_targets": 882,
+      "images": 98,
+      "seeds": [
+        11,
+        89,
+        181
+      ],
+      "models": [
+        "DINOv2",
+        "ResNet18",
+        "UNI"
+      ]
+    }
+  ],
+  "checks": "input/checkpoint/output hashes; manifest; probabilities; AUC; tie-free/random validation"
+}

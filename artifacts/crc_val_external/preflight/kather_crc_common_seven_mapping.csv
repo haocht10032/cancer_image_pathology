@@ -1,0 +1,9 @@
+crc_class,common_class,common_label
+ADI,adipose,0
+BACK,background,1
+DEB,debris_mucus,2
+MUC,debris_mucus,2
+LYM,lymphocytes,3
+NORM,normal_mucosa,4
+STR,stroma,5
+TUM,tumor,6

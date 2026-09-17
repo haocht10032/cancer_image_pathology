@@ -1,0 +1,7 @@
+item,value
+bootstrap_iterations,5000
+bootstrap_seed,2027
+sensitivity_seeds,"11,89,181"
+source_groups,10
+primary_images,187
+random_deletion_repeats_revision_external,5

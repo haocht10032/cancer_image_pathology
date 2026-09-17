@@ -1,0 +1,19 @@
+scope,model,attribution_occlusion_spearman,top_minus_random_relative_target_logit_reduction_auc,top_beats_random_target_logit
+"Kather conditional
+187 images, 3 seeds",DINOv2,0.0432027091052536,0.0586865908925886,0.71157495256167
+"Kather conditional
+187 images, 3 seeds",ResNet18,0.0141382410380344,-0.0972726830601922,0.172675521821632
+"Kather conditional
+187 images, 3 seeds",UNI,0.128356002572891,0.0932230662468712,0.96584440227704
+"CRC conditional
+48 images, 3 seeds",ResNet18,0.0806279963032185,-0.103348075369573,0.150943396226415
+"CRC conditional
+48 images, 3 seeds",DINOv2,0.117046139855037,0.0589055149207691,0.754716981132076
+"CRC conditional
+48 images, 3 seeds",UNI,0.0207921795947684,0.0851050212968305,0.867924528301887
+"CRC class-complete
+98 images, filtered",ResNet18,0.064565329273002,0.0477755812070966,0.313380281690141
+"CRC class-complete
+98 images, filtered",DINOv2,0.0946159380267055,0.0519927469837144,0.774647887323944
+"CRC class-complete
+98 images, filtered",UNI,0.0260598770533597,0.120578232619925,0.869718309859155

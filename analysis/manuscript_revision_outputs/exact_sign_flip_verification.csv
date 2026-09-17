@@ -1,0 +1,7 @@
+"metric","model_a","model_b","images","source_groups","sign_configurations","extreme_configurations","source_mean_difference","recomputed_p","saved_p","saved_holm_p","recomputed_holm_p"
+"attribution_occlusion_spearman","UNI","ResNet18",187,10,1024,10,0.106017435237918,0.009765625,0.009765625,0.029296875,0.029296875
+"attribution_occlusion_spearman","UNI","DINOv2",187,10,1024,16,0.0875806364103383,0.015625,0.015625,0.03125,0.03125
+"attribution_occlusion_spearman","DINOv2","ResNet18",187,10,1024,470,0.01843679882758,0.458984375,0.458984375,0.458984375,0.458984375
+"top_minus_random_relative_target_logit_reduction_auc","UNI","ResNet18",187,10,1024,2,0.190268177986268,0.001953125,0.001953125,0.005859375,0.005859375
+"top_minus_random_relative_target_logit_reduction_auc","UNI","DINOv2",187,10,1024,12,0.032520127897024,0.01171875,0.01171875,0.01171875,0.01171875
+"top_minus_random_relative_target_logit_reduction_auc","DINOv2","ResNet18",187,10,1024,2,0.157748050089244,0.001953125,0.001953125,0.005859375,0.005859375

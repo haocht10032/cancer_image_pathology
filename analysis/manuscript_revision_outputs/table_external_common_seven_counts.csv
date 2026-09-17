@@ -1,0 +1,8 @@
+class_name,images,source_folders
+tumor,1233,TUM
+stroma,421,STR
+lymphocytes,634,LYM
+adipose,1338,ADI
+background,847,BACK
+normal_mucosa,741,NORM
+debris_mucus,1374,DEB+MUC

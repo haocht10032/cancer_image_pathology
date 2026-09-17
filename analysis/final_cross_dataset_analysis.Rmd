@@ -1,0 +1,684 @@
+---
+title: "Final cross-dataset analysis: Kather-5K and CRC-VAL-HE-7K"
+author: "Haochen Tan"
+date: "`r format(Sys.Date(), '%Y-%m-%d')`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+params:
+  bootstrap_iterations: 5000
+  bootstrap_seed: 2027
+  denominator_threshold: 0.25
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(patchwork)
+library(scales)
+
+if (!exists("params")) {
+  params <- list(
+    bootstrap_iterations = 5000,
+    bootstrap_seed = 2027,
+    denominator_threshold = 0.25
+  )
+}
+
+project_root <- normalizePath(file.path(getwd(), ".."), mustWork = TRUE)
+external_root <- file.path(
+  project_root, "artifacts", "crc_val_external", "common_seven"
+)
+kather_root <- file.path(project_root, "artifacts", "kather5k_jpi_revision")
+output_dir <- file.path(external_root, "final_reporting")
+table_dir <- file.path(output_dir, "tables")
+figure_dir <- file.path(project_root, "analysis", "manuscript_figures")
+dir.create(table_dir, recursive = TRUE, showWarnings = FALSE)
+dir.create(figure_dir, recursive = TRUE, showWarnings = FALSE)
+
+model_order <- c("ResNet18", "DINOv2", "UNI")
+model_colors <- c(
+  ResNet18 = "#3266A8",
+  DINOv2 = "#D17A22",
+  UNI = "#23866B"
+)
+primary_methods <- c(
+  ResNet18 = "gradcam",
+  DINOv2 = "gradient_attention_rollout",
+  UNI = "gradient_attention_rollout"
+)
+
+theme_manuscript <- function() {
+  theme_minimal(base_size = 10.5) +
+    theme(
+      panel.grid.minor = element_blank(),
+      panel.grid.major.x = element_blank(),
+      axis.title = element_text(color = "#202020"),
+      axis.text = element_text(color = "#303030"),
+      plot.title = element_text(face = "bold", size = 11),
+      plot.subtitle = element_text(color = "#505050", size = 9),
+      legend.position = "bottom",
+      legend.title = element_blank(),
+      strip.text = element_text(face = "bold"),
+      plot.margin = margin(6, 8, 6, 6)
+    )
+}
+
+save_figure <- function(plot, stem, width, height) {
+  ggsave(
+    file.path(figure_dir, paste0(stem, ".pdf")), plot,
+    width = width, height = height, units = "in", device = grDevices::pdf
+  )
+  ggsave(
+    file.path(figure_dir, paste0(stem, ".png")), plot,
+    width = width, height = height, units = "in", dpi = 320,
+    bg = "white"
+  )
+}
+```
+
+# Locked analysis
+
+This report is a CPU-only post-processing analysis. It does not retrain a model,
+change the frozen 98-image external attribution cohort, or recalculate attribution
+maps. The only amendment is the prespecified denominator sensitivity rule:
+
+\[
+  |z_y(x)| < 0.25.
+\]
+
+For a paired cross-model deletion comparison, an image-seed set is retained only
+when all three models satisfy the denominator rule. This preserves pairing while
+avoiding model-specific removal of observations after inspecting ratios.
+
+```{r load-data}
+metrics <- read.csv(
+  file.path(external_root, "faithfulness", "external_faithfulness_metrics.csv"),
+  stringsAsFactors = FALSE
+)
+classification <- read.csv(
+  file.path(external_root, "classification", "classification_per_seed.csv"),
+  stringsAsFactors = FALSE
+)
+classification_class <- read.csv(
+  file.path(external_root, "classification", "classification_per_class.csv"),
+  stringsAsFactors = FALSE
+)
+kather_classification <- read.csv(
+  file.path(kather_root, "classification", "classification_per_seed.csv"),
+  stringsAsFactors = FALSE
+)
+kather_faithfulness <- read.csv(
+  file.path(kather_root, "statistics", "architecture_explainer_summary.csv"),
+  stringsAsFactors = FALSE
+)
+
+metrics <- metrics %>%
+  filter(
+    perturbation == "normalized_zero",
+    grid_label == "common_14",
+    method == unname(primary_methods[model])
+  ) %>%
+  mutate(
+    model = factor(model, levels = model_order),
+    top_beats_random_target_logit =
+      as.numeric(
+        tolower(as.character(top_beats_random_target_logit)) %in%
+          c("true", "1")
+      )
+  )
+
+external_primary <- metrics %>%
+  filter(analysis_family == "primary_jointly_correct_true_class")
+external_all <- metrics %>%
+  filter(analysis_family == "all_image_true_class_sensitivity")
+```
+
+# Denominator-filtered class-complete analysis
+
+```{r matched-filter}
+flag_audit <- external_all %>%
+  mutate(
+    denominator_flag = abs(unperturbed_target_logit) <
+      params$denominator_threshold
+  ) %>%
+  select(
+    cohort_id, seed, model, class_name, unperturbed_target_logit,
+    denominator_flag
+  )
+
+matched_sets <- flag_audit %>%
+  group_by(cohort_id, seed) %>%
+  summarise(
+    any_denominator_flag = any(denominator_flag),
+    flagged_models = paste(as.character(model[denominator_flag]), collapse = ";"),
+    .groups = "drop"
+  )
+
+exclusion_audit <- flag_audit %>%
+  filter(denominator_flag) %>%
+  arrange(model, cohort_id, seed)
+
+external_all_filtered <- external_all %>%
+  inner_join(
+    matched_sets %>% filter(!any_denominator_flag) %>%
+      select(cohort_id, seed),
+    by = c("cohort_id", "seed")
+  )
+
+stopifnot(n_distinct(external_all_filtered$model) == 3)
+stopifnot(
+  all(
+    external_all_filtered %>%
+      count(cohort_id, seed) %>%
+      pull(n) == 3
+  )
+)
+
+write.csv(
+  exclusion_audit,
+  file.path(table_dir, "external_near_zero_logit_exclusion_audit.csv"),
+  row.names = FALSE
+)
+write.csv(
+  matched_sets,
+  file.path(table_dir, "external_matched_image_seed_retention.csv"),
+  row.names = FALSE
+)
+
+data.frame(
+  denominator_threshold = params$denominator_threshold,
+  external_images = n_distinct(external_all$cohort_id),
+  original_image_seed_sets = n_distinct(
+    interaction(external_all$cohort_id, external_all$seed)
+  ),
+  flagged_model_rows = nrow(exclusion_audit),
+  flagged_resnet18_rows = sum(exclusion_audit$model == "ResNet18"),
+  flagged_dinov2_rows = sum(exclusion_audit$model == "DINOv2"),
+  flagged_uni_rows = sum(exclusion_audit$model == "UNI"),
+  excluded_paired_image_seed_sets = sum(matched_sets$any_denominator_flag),
+  retained_paired_image_seed_sets = sum(!matched_sets$any_denominator_flag)
+)
+```
+
+The rule identifies eight ResNet18 rows and two UNI rows. No DINOv2 row is
+flagged. Removing the corresponding image-seed sets from all three models retains
+284 of 294 paired image-seed sets and all 98 unique images.
+
+## Paired inference
+
+```{r inference-functions}
+paired_bootstrap_ci <- function(difference, iterations, seed) {
+  set.seed(seed)
+  boot <- replicate(
+    iterations,
+    mean(sample(difference, length(difference), replace = TRUE))
+  )
+  unname(quantile(boot, c(0.025, 0.975), na.rm = TRUE))
+}
+
+paired_tests <- function(data, metric_names, family_name) {
+  image_values <- data %>%
+    group_by(cohort_id, class_name, model) %>%
+    summarise(across(all_of(metric_names), ~mean(.x, na.rm = TRUE)),
+              .groups = "drop")
+
+  pairs <- list(
+    c("UNI", "ResNet18"),
+    c("UNI", "DINOv2"),
+    c("DINOv2", "ResNet18")
+  )
+  rows <- list()
+  index <- 1L
+  for (metric_name in metric_names) {
+    wide <- image_values %>%
+      select(cohort_id, model, all_of(metric_name)) %>%
+      pivot_wider(names_from = model, values_from = all_of(metric_name))
+    for (pair in pairs) {
+      difference <- wide[[pair[[1]]]] - wide[[pair[[2]]]]
+      difference <- difference[is.finite(difference)]
+      ci <- paired_bootstrap_ci(
+        difference,
+        params$bootstrap_iterations,
+        params$bootstrap_seed + index
+      )
+      if (length(difference) < 2L || all(abs(difference) < 1e-12)) {
+        test_statistic <- 0
+        test_p <- 1
+      } else {
+        test <- suppressWarnings(
+          wilcox.test(difference, mu = 0, paired = FALSE,
+                      exact = FALSE, correct = FALSE)
+        )
+        test_statistic <- unname(test$statistic)
+        test_p <- test$p.value
+      }
+      rows[[index]] <- data.frame(
+        analysis_family = family_name,
+        metric = metric_name,
+        model_a = pair[[1]],
+        model_b = pair[[2]],
+        difference_definition = "model_a_minus_model_b",
+        paired_images = length(difference),
+        mean_difference = mean(difference),
+        median_difference = median(difference),
+        bootstrap_ci_low = ci[[1]],
+        bootstrap_ci_high = ci[[2]],
+        bootstrap_inference_level = "paired_tile_bootstrap_exploratory",
+        wilcoxon_statistic = test_statistic,
+        wilcoxon_p = test_p,
+        stringsAsFactors = FALSE
+      )
+      index <- index + 1L
+    }
+  }
+  bind_rows(rows) %>%
+    group_by(metric) %>%
+    mutate(wilcoxon_p_holm = p.adjust(wilcoxon_p, method = "holm")) %>%
+    ungroup()
+}
+```
+
+```{r filtered-tests}
+deletion_metrics <- c(
+  "top_minus_random_relative_target_logit_reduction_auc",
+  "top_beats_random_target_logit",
+  "top_minus_random_5_relative_target_logit_reduction",
+  "top_minus_random_10_relative_target_logit_reduction",
+  "top_minus_random_20_relative_target_logit_reduction",
+  "top_minus_random_30_relative_target_logit_reduction"
+)
+
+filtered_tests <- paired_tests(
+  external_all_filtered,
+  deletion_metrics,
+  "all_image_true_class_denominator_filtered"
+)
+write.csv(
+  filtered_tests,
+  file.path(table_dir, "external_filtered_paired_model_tests.csv"),
+  row.names = FALSE
+)
+
+filtered_tests %>%
+  filter(metric %in% c(
+    "top_minus_random_relative_target_logit_reduction_auc",
+    "top_beats_random_target_logit"
+  )) %>%
+  select(
+    metric, model_a, model_b, paired_images, mean_difference,
+    bootstrap_ci_low, bootstrap_ci_high, wilcoxon_p_holm
+  )
+```
+
+## Filtered descriptive summaries
+
+```{r filtered-summaries}
+summary_metrics <- c(
+  "attribution_occlusion_spearman",
+  "top_minus_random_relative_target_logit_reduction_auc",
+  "top_beats_random_target_logit"
+)
+
+filtered_overall <- external_all_filtered %>%
+  group_by(model) %>%
+  summarise(
+    image_seed_rows = n(),
+    images = n_distinct(cohort_id),
+    across(
+      all_of(summary_metrics),
+      list(mean = ~mean(.x, na.rm = TRUE),
+           median = ~median(.x, na.rm = TRUE),
+           sd = ~sd(.x, na.rm = TRUE))
+    ),
+    .groups = "drop"
+  )
+
+filtered_by_class <- external_all_filtered %>%
+  group_by(model, class_name) %>%
+  summarise(
+    image_seed_rows = n(),
+    images = n_distinct(cohort_id),
+    across(
+      all_of(summary_metrics),
+      list(mean = ~mean(.x, na.rm = TRUE),
+           median = ~median(.x, na.rm = TRUE),
+           sd = ~sd(.x, na.rm = TRUE))
+    ),
+    .groups = "drop"
+  )
+
+write.csv(
+  filtered_overall,
+  file.path(table_dir, "external_filtered_class_complete_overall.csv"),
+  row.names = FALSE
+)
+write.csv(
+  filtered_by_class,
+  file.path(table_dir, "external_filtered_class_complete_by_class.csv"),
+  row.names = FALSE
+)
+
+filtered_overall
+```
+
+# Publication figures
+
+## External classification
+
+```{r external-classification-figure, fig.width=10.5, fig.height=4.2}
+classification$model <- factor(classification$model, levels = model_order)
+classification_class$model <- factor(
+  classification_class$model, levels = model_order
+)
+
+class_labels <- c(
+  adipose = "Adipose", background = "Background",
+  debris_mucus = "Debris/mucus", lymphocytes = "Lymphocytes",
+  normal_mucosa = "Normal mucosa", stroma = "Stroma", tumor = "Tumor"
+)
+
+classification_long <- classification %>%
+  pivot_longer(
+    c(accuracy, balanced_accuracy, macro_f1),
+    names_to = "metric", values_to = "value"
+  ) %>%
+  mutate(
+    metric = recode(
+      metric,
+      accuracy = "Accuracy",
+      balanced_accuracy = "Balanced accuracy",
+      macro_f1 = "Macro-F1"
+    )
+  )
+
+g_classification <- ggplot(
+  classification_long,
+  aes(model, value, color = model, group = seed)
+) +
+  geom_line(color = "#B8B8B8", linewidth = 0.35) +
+  geom_point(size = 2.1, alpha = 0.9) +
+  stat_summary(
+    aes(group = model), fun = mean, geom = "point",
+    shape = 23, size = 3.2, fill = "white", color = "black"
+  ) +
+  facet_wrap(~metric, nrow = 1) +
+  scale_color_manual(values = model_colors) +
+  scale_y_continuous(limits = c(0.58, 0.86), breaks = seq(0.6, 0.85, 0.05)) +
+  labs(
+    title = "A. Coarse-label external classification",
+    subtitle = "Kather-trained models evaluated on 6,588 CRC-VAL tiles; three training seeds",
+    x = NULL, y = NULL
+  ) +
+  theme_manuscript() +
+  theme(legend.position = "none")
+
+class_heatmap <- classification_class %>%
+  group_by(model, class_name) %>%
+  summarise(recall = mean(recall), .groups = "drop") %>%
+  mutate(
+    class_name = factor(
+      class_name,
+      levels = rev(names(class_labels)),
+      labels = rev(unname(class_labels))
+    )
+  )
+
+g_class_heatmap <- ggplot(class_heatmap, aes(model, class_name, fill = recall)) +
+  geom_tile(color = "white", linewidth = 0.8) +
+  geom_text(aes(label = sprintf("%.2f", recall)), size = 3.0) +
+  scale_fill_gradientn(
+    colors = c("#F7F7F7", "#F3C567", "#23866B"),
+    limits = c(0, 1), labels = percent_format(accuracy = 1)
+  ) +
+  labs(
+    title = "B. Tissue-specific recall",
+    subtitle = "Mean across three seeds",
+    x = NULL, y = NULL, fill = "Recall"
+  ) +
+  theme_manuscript() +
+  theme(panel.grid = element_blank(), legend.position = "right")
+
+figure_external_classification <-
+  g_classification + g_class_heatmap + plot_layout(widths = c(1.25, 0.9))
+save_figure(
+  figure_external_classification,
+  "figure_13_external_classification",
+  width = 11.2, height = 4.25
+)
+figure_external_classification
+```
+
+## Cross-dataset faithfulness
+
+```{r cross-dataset-faithfulness-figure, fig.width=10.5, fig.height=4.4}
+kather_primary <- kather_faithfulness %>%
+  filter(
+    cohort_name == "selected_faithfulness",
+    analysis_family == "primary_jointly_correct_true_class",
+    perturbation == "normalized_zero",
+    grid_label == "common_14",
+    model %in% model_order
+  ) %>%
+  transmute(
+    scope = "Kather conditional\n187 images, 3 seeds",
+    model,
+    attribution_occlusion_spearman = mean_spearman,
+    top_minus_random_relative_target_logit_reduction_auc =
+      mean_scale_free_logit_auc,
+    top_beats_random_target_logit = top_beats_random_fraction
+  )
+
+external_primary_summary <- external_primary %>%
+  group_by(model) %>%
+  summarise(across(all_of(summary_metrics), ~mean(.x, na.rm = TRUE)),
+            .groups = "drop") %>%
+  mutate(scope = "CRC conditional\n48 images, 3 seeds")
+
+external_filtered_summary <- external_all_filtered %>%
+  group_by(model) %>%
+  summarise(across(all_of(summary_metrics), ~mean(.x, na.rm = TRUE)),
+            .groups = "drop") %>%
+  mutate(scope = "CRC class-complete\n98 images, filtered")
+
+cross_dataset_summary <- bind_rows(
+  kather_primary,
+  external_primary_summary,
+  external_filtered_summary
+) %>%
+  mutate(
+    model = factor(model, levels = model_order),
+    scope = factor(
+      scope,
+      levels = c(
+        "Kather conditional\n187 images, 3 seeds",
+        "CRC conditional\n48 images, 3 seeds",
+        "CRC class-complete\n98 images, filtered"
+      )
+    )
+  )
+
+write.csv(
+  cross_dataset_summary,
+  file.path(table_dir, "cross_dataset_faithfulness_summary.csv"),
+  row.names = FALSE
+)
+
+cross_dataset_long <- cross_dataset_summary %>%
+  pivot_longer(
+    all_of(summary_metrics), names_to = "metric", values_to = "value"
+  ) %>%
+  mutate(
+    metric = recode(
+      metric,
+      attribution_occlusion_spearman = "Attribution-occlusion Spearman",
+      top_minus_random_relative_target_logit_reduction_auc =
+        "Top - random relative logit AUC",
+      top_beats_random_target_logit = "Top deletion beats random"
+    )
+  )
+
+figure_cross_dataset <- ggplot(
+  cross_dataset_long,
+  aes(scope, value, color = model, group = model)
+) +
+  geom_hline(yintercept = 0, color = "#8A8A8A", linewidth = 0.35) +
+  geom_line(linewidth = 0.7, alpha = 0.75) +
+  geom_point(size = 2.7) +
+  facet_wrap(~metric, scales = "free_y", nrow = 1) +
+  scale_color_manual(values = model_colors) +
+  labs(
+    title = "Faithfulness rankings change across dataset and estimand",
+    subtitle = "Positive relative deletion AUC means top-ranked deletion is more damaging than random",
+    x = NULL, y = NULL
+  ) +
+  theme_manuscript() +
+  theme(axis.text.x = element_text(angle = 18, hjust = 1))
+
+save_figure(
+  figure_cross_dataset,
+  "figure_14_cross_dataset_faithfulness",
+  width = 11.0, height = 4.35
+)
+figure_cross_dataset
+```
+
+## External tissue heterogeneity
+
+```{r external-heterogeneity-figure, fig.width=9.2, fig.height=5.2}
+heterogeneity <- external_all_filtered %>%
+  group_by(model, class_name) %>%
+  summarise(
+    `Attribution-occlusion Spearman` =
+      mean(attribution_occlusion_spearman, na.rm = TRUE),
+    `Top - random relative logit AUC` =
+      mean(top_minus_random_relative_target_logit_reduction_auc),
+    .groups = "drop"
+  ) %>%
+  pivot_longer(
+    c(`Attribution-occlusion Spearman`, `Top - random relative logit AUC`),
+    names_to = "metric", values_to = "value"
+  ) %>%
+  mutate(
+    model = factor(model, levels = model_order),
+    class_name = factor(
+      class_name,
+      levels = names(class_labels),
+      labels = unname(class_labels)
+    )
+  )
+
+figure_heterogeneity <- ggplot(
+  heterogeneity,
+  aes(class_name, model, fill = value)
+) +
+  geom_tile(color = "white", linewidth = 0.8) +
+  geom_text(aes(label = sprintf("%.2f", value)), size = 3.0) +
+  facet_wrap(~metric, ncol = 1, scales = "free") +
+  scale_fill_gradient2(
+    low = "#B55245", mid = "#F7F7F7", high = "#23866B",
+    midpoint = 0
+  ) +
+  labs(
+    title = "External attribution faithfulness is tissue dependent",
+    subtitle = "Class-complete true-class sensitivity; denominator-filtered matched image-seed sets",
+    x = NULL, y = NULL, fill = "Mean"
+  ) +
+  theme_manuscript() +
+  theme(
+    axis.text.x = element_text(angle = 28, hjust = 1),
+    panel.grid = element_blank(),
+    legend.position = "right"
+  )
+
+save_figure(
+  figure_heterogeneity,
+  "figure_15_external_tissue_heterogeneity",
+  width = 9.4, height = 5.5
+)
+figure_heterogeneity
+```
+
+# Final reporting table
+
+```{r final-table}
+classification_summary <- classification %>%
+  group_by(model) %>%
+  summarise(
+    accuracy_mean = mean(accuracy),
+    accuracy_sd = sd(accuracy),
+    balanced_accuracy_mean = mean(balanced_accuracy),
+    macro_f1_mean = mean(macro_f1),
+    .groups = "drop"
+  )
+
+external_reporting_table <- classification_summary %>%
+  left_join(
+    filtered_overall %>%
+      select(
+        model,
+        spearman_mean = attribution_occlusion_spearman_mean,
+        relative_logit_auc_mean =
+          top_minus_random_relative_target_logit_reduction_auc_mean,
+        top_beats_random_fraction = top_beats_random_target_logit_mean
+      ),
+    by = "model"
+  ) %>%
+  arrange(factor(model, levels = model_order))
+
+write.csv(
+  external_reporting_table,
+  file.path(table_dir, "external_final_reporting_table.csv"),
+  row.names = FALSE
+)
+external_reporting_table
+```
+
+# Reproducibility manifest
+
+```{r manifest}
+manifest <- data.frame(
+  item = c(
+    "source_metrics",
+    "source_classification",
+    "cohort_manifest",
+    "denominator_threshold",
+    "bootstrap_iterations",
+    "bootstrap_seed",
+    "inference_level",
+    "patient_metadata_available",
+    "models_retrained"
+  ),
+  value = c(
+    "faithfulness/external_faithfulness_metrics.csv",
+    "classification/classification_per_seed.csv",
+    "preflight/common_seven_attribution_cohort_tile_exploratory.csv",
+    as.character(params$denominator_threshold),
+    as.character(params$bootstrap_iterations),
+    as.character(params$bootstrap_seed),
+    "paired tile bootstrap exploratory",
+    "false",
+    "false"
+  )
+)
+write.csv(
+  manifest,
+  file.path(output_dir, "final_reporting_manifest.csv"),
+  row.names = FALSE
+)
+manifest
+```
+
+# Interpretation lock
+
+The filtered analysis supports a deliberately non-universal conclusion. DINOv2 has
+the strongest CRC-VAL classification and patchwise attribution-occlusion agreement.
+UNI has the most favorable numerical top-versus-random deletion behavior. The two
+Transformer pipelines are complementary rather than reducible to a single external
+winner. Highlighted patches are regions contributing to a model score under the
+defined perturbation; they are not biological causes.
