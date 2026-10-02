@@ -1,5 +1,18 @@
 # Publication update log
 
+## 2026-10-02 scoped licensing update
+
+The maintainer authorized using MIT for original project software and CC BY 4.0
+for original documentation and authorized compact numerical outputs while final
+ownership/coauthor confirmation is recorded. Added the license texts, exact scope,
+and third-party notices. The compact MaskCut implementation is excluded from the
+MIT grant pending provenance review. No written coauthor approval is asserted.
+
+This is a current-repository licensing/documentation update only. No scientific
+code, trained models, or frozen results were changed. The historical `v1.0.0`
+tag and Zenodo record remain unchanged, with their existing CC BY 4.0 metadata.
+The separate full perturbation archive remains unpublished.
+
 ## 2026-10-02 software DOI follow-up
 
 The published Zenodo software record for `v1.0.0` is

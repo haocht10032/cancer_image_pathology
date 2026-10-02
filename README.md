@@ -45,8 +45,10 @@ The [v1.0.0 release](https://github.com/haocht10032/cancer_image_pathology/relea
 at commit `e248c59a4094913d150b8a3652e57700d35ba38e` is archived as software at
 [DOI 10.5281/zenodo.23105039](https://doi.org/10.5281/zenodo.23105039).
 This DOI covers code and compact outputs, **not the full perturbation archive**.
-Public access to that archive, repository license approval, and a complete
-dependency lock remain pending. See `docs/RELEASE_CHECKLIST.md`.
+The current repository uses MIT for original software and CC BY 4.0 for original
+content and authorized compact outputs, subject to the [licensing scope](LICENSING.md).
+Public access to the full archive and a complete dependency lock remain pending.
+See `docs/RELEASE_CHECKLIST.md` for remaining confirmation and release tasks.
 
 ## Main findings
 
@@ -168,7 +170,12 @@ when available. Post-release documentation updates do not change the archived
 v1.0.0 snapshot.
 The repository URL is https://github.com/haocht10032/cancer_image_pathology.
 
-Third-party repositories and restricted weights are not bundled. The Zenodo
-record currently lists CC BY 4.0, which remains subject to author confirmation.
-This repository has no approved LICENSE file. Do not assume that the archive
-license covers third-party datasets or model weights. See `docs/RIGHTS.md`.
+Original software in the current repository is available under [MIT](LICENSE).
+Original documentation and authorized compact numerical outputs use
+[CC BY 4.0](LICENSES/CC-BY-4.0.txt). Read [LICENSING.md](LICENSING.md) for scope,
+including the MaskCut implementation exception, and
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for upstream terms.
+Third-party datasets, repositories, and restricted weights are not relicensed.
+The historical Zenodo v1.0.0 record retains its CC BY 4.0 metadata; this update
+does not change that archived release. Final ownership and coauthor confirmation
+is tracked in [release tasks](docs/RELEASE_CHECKLIST.md).

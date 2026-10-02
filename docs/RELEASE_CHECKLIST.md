@@ -8,12 +8,15 @@ The code repository and demonstration website are public:
 The code/compact-output release `v1.0.0` is archived at
 https://doi.org/10.5281/zenodo.23105039 (commit
 `e248c59a4094913d150b8a3652e57700d35ba38e`). The separate full perturbation archive
-remains unpublished. Zenodo currently lists CC BY 4.0; author confirmation of
-that license and repository licensing remains pending. Public availability does
-not imply that the author-controlled checks below are complete.
+remains unpublished. The historical Zenodo record retains CC BY 4.0 metadata.
+The current repository uses the scoped MIT/CC BY 4.0 split in
+[LICENSING.md](../LICENSING.md). Final ownership/coauthor confirmation and adapted
+code clearance remain to be recorded. Public availability does not imply that
+the author-controlled checks below are complete.
 
 - [ ] Coauthors approve public code, derived outputs and citation metadata.
-- [ ] Confirm ownership/license; add an approved LICENSE and upstream notices.
+- [x] Apply the maintainer-selected MIT/CC BY 4.0 split and document upstream exceptions.
+- [ ] Record final ownership, coauthor approval, and adapted-code/provider clearance.
 - [ ] Export a complete dependency lock from the original online environment.
 - [ ] Review sanitized paths, clean notebooks, numeric exports and package audit.
 - [ ] Test a clean-machine install and at least the proof workflow with authorized assets.
