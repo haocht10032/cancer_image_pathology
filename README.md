@@ -39,9 +39,10 @@ The contribution is a reproducible empirical audit, not a new model architecture
 Differences concern model-training-explanation pipelines; they do not isolate a
 causal effect of pathology pretraining.
 
-**Release status:** prepared for author review, not a published/tagged release.
-No license, archive DOI or full dependency lock has been approved or invented.
-See `docs/RELEASE_CHECKLIST.md` before making this package public.
+**Release status:** the code repository and demonstration website are public.
+A manuscript-associated tagged release, approved license, archive DOI, and full
+dependency lock remain pending. See `docs/RELEASE_CHECKLIST.md` before finalizing
+the publication release.
 
 ## Main findings
 
@@ -50,8 +51,10 @@ See `docs/RELEASE_CHECKLIST.md` before making this package public.
 - DINOv2 had the strongest external classification and patchwise agreement.
 - Probability deletion favored both Transformer pipelines over ResNet18, but
   did not establish a UNI-over-DINOv2 AUC difference in any of four analyses.
-- UNI more consistently beat random deletion on Kather; the corresponding external
-  comparison was not supported after Holm correction.
+- Source-weighted tests supported UNI's greater deletion-success consistency over
+  DINOv2 in both the selected and jointly correct random Kather subsets. This is
+  a separate endpoint from probability-drop AUC. The external conditional
+  comparison did not distinguish UNI from DINOv2 after Holm correction.
 - Penultimate-layer within-image-mean activation patching was a negative ablation.
   No causal-ranking loss was implemented.
 
@@ -82,6 +85,7 @@ Rscript environment/install_reporting_packages.R
 Rscript analysis/feedback2_analysis.R
 Rscript Methods/Feedback2/build_probability_tables.R
 Rscript Methods/Feedback2/plot_probability_results.R
+Rscript analysis/verify_final_statistical_details.R
 ```
 
 The final reporting entry point is `analysis/feedback2_analysis.R`. It recomputes
@@ -92,6 +96,11 @@ The original-tile gallery is skipped when CRC images are absent. R's `magick`
 package is needed only for that optional gallery. Earlier Rmd analyses preserve
 historical results and may require the separate large-output archive; they are
 not substitutes for the corrected headline reporting.
+
+The independent statistical check verifies historical exact sign-flip results and
+external correlation missingness; it does not replace the corrected headline
+inference. See [the publication update log](docs/UPDATE_LOG.md) for the current
+reporting snapshot and validation scope.
 
 `*.csv.gz` files are losslessly compressed sanitized exports. The preparation
 script verifies and expands them to the paths expected by the original workflow.

@@ -25,7 +25,7 @@ rows<-vapply(seq_along(scopes),function(i) {
     paste(c(labels[i],d$images[1],sprintf("%.4f",d[[auc]]),pformat(p$p_holm)),collapse=" & ")
 },"")
 table_file("feedback2_probability_means.tex",
-    "Probability-deletion sensitivity with deterministic ties. Values are image-weighted mean top-minus-random probability-drop AUCs over deletion fractions 0--0.5; positive values favor top deletion. The final column gives the UNI--DINOv2 Holm-adjusted AUC test: source-weighted for Kather and exploratory tile-weighted for CRC. Kather and conditional CRC subsets require joint correctness; the class-complete CRC analysis explains the true class for all 98 images.",
+    "Probability-deletion sensitivity with deterministic ties, separate from historical-logit endpoints. Values are image-weighted mean top-minus-random probability-drop AUCs over deletion fractions 0--0.5; positive values favor top deletion. Kather random denotes the jointly correct subset of the prediction-independent cohort (100 of 128 images). Kather selected and conditional CRC also require joint correctness; class-complete CRC includes all 98 images. The final column is the UNI--DINOv2 Holm-adjusted test: source-weighted on Kather and exploratory tile-level signed-rank on CRC. The latter is not a direct test of a mean difference.",
     "tab:probability_means","lrrrrr","Analysis & $n$ & ResNet18 & DINOv2 & UNI & $p_H$",rows)
 for(metric in c(auc,"top_beats_random_probability")) {
     rows<-character()
@@ -42,7 +42,9 @@ for(metric in c(auc,"top_beats_random_probability")) {
     endpoint<-if(is_auc) "probability-drop AUC" else "probability-based deletion success"
     suffix<-if(is_auc) "auc" else "success"
     table_file(paste0("feedback2_probability_",suffix,"_tests.tex"),
-        paste0("Paired contrasts for ",endpoint," under the deterministic tie rule. R18 denotes ResNet18. Effects are first minus second, source-weighted on Kather and tile-weighted on CRC; success effects are proportions. Intervals are pointwise 95\\% bootstrap intervals (5,000 resamples), hierarchical by source then image on Kather and exploratory tile-level on CRC. Each cohort has a six-test Holm family spanning the three model pairs and both probability endpoints."),
+        paste0("Paired contrasts for ",endpoint," under the deterministic tie rule. R18 denotes ResNet18; Kather random denotes the jointly correct subset of the prediction-independent cohort. Effects are first minus second, source-weighted on Kather and tile-weighted on CRC",
+            if(is_auc) ". " else "; success effects are proportions. ",
+            "Intervals are pointwise 95\\% bootstrap intervals (5,000 resamples), hierarchical by source then image on Kather and exploratory tile-level on CRC. Each cohort has a six-test Holm family spanning the three model pairs and both probability endpoints. CRC signed-rank tests concern paired-difference distributions, not directly the reported mean contrasts; differences in inferential targets and multiplicity adjustment can produce disagreement with mean intervals."),
         paste0("tab:probability_",suffix,"_tests"),"llrlr",
         "Analysis & Contrast & Effect & 95\\% CI & $p_H$",rows)
 }
