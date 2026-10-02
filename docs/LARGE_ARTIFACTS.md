@@ -3,7 +3,10 @@
 This repository is deliberately not a full checkpoint/data mirror. The inventory
 `provenance/large_artifacts_inventory.csv` lists excluded derived files by relative
 path, size and category. It is an inventory, not permission to redistribute each
-entry and not a downloadable archive. No DOI/download URL exists yet.
+entry and not a downloadable archive. No DOI/download URL exists yet for these
+full perturbation files. The software DOI
+https://doi.org/10.5281/zenodo.23105039 covers the `v1.0.0` code and compact outputs
+only; it does not include the separate files listed below.
 
 Before an archival release, select and sanitize the required final outputs:
 

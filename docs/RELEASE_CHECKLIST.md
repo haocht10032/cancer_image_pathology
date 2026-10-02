@@ -5,9 +5,12 @@ The code repository and demonstration website are public:
 - https://github.com/haocht10032/cancer_image_pathology
 - https://haocht10032.github.io/cancer_image_pathology/
 
-A manuscript-associated tagged release and archival DOI remain pending. Public
-availability does not imply that the author-controlled release checks below are
-complete.
+The code/compact-output release `v1.0.0` is archived at
+https://doi.org/10.5281/zenodo.23105039 (commit
+`e248c59a4094913d150b8a3652e57700d35ba38e`). The separate full perturbation archive
+remains unpublished. Zenodo currently lists CC BY 4.0; author confirmation of
+that license and repository licensing remains pending. Public availability does
+not imply that the author-controlled checks below are complete.
 
 - [ ] Coauthors approve public code, derived outputs and citation metadata.
 - [ ] Confirm ownership/license; add an approved LICENSE and upstream notices.
@@ -16,8 +19,9 @@ complete.
 - [ ] Test a clean-machine install and at least the proof workflow with authorized assets.
 - [ ] Sanitize/approve the separate large-output archive; publish its manifest/DOI.
 - [x] Publish the code repository and demonstration website.
-- [ ] Create an explicit tagged release of the author-approved package.
-- [ ] Record the tag/commit/archive DOI in CITATION.cff, README and manuscript.
+- [x] Create an explicit tagged code/compact-output release (`v1.0.0`).
+- [x] Archive that software release and record its tag/commit/DOI in CITATION.cff,
+  README and manuscript.
 
 Keep the public repository, local publication package, and manuscript release
 identifiers synchronized when the final release is approved.

@@ -1,8 +1,11 @@
 # Rights and licensing review
 
 No LICENSE file is supplied because the authors have not confirmed the project's
-license and ownership approvals. This draft does not grant an open-source license.
-Before public release, confirm the chosen license with coauthors/institutions and
+license and ownership approvals. The published `v1.0.0` Zenodo record
+(https://doi.org/10.5281/zenodo.23105039) currently lists CC BY 4.0; the author has
+indicated that this archive license needs confirmation. No repository LICENSE
+was added or Zenodo license changed during the DOI documentation update.
+Confirm the intended archive and repository licenses with coauthors/institutions and
 preserve all applicable third-party notices. A code license does not automatically
 license datasets, pretrained models, derived weights or manuscript materials.
 

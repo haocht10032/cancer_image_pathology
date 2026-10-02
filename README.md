@@ -13,6 +13,7 @@ contribute to model predictions; they are not biological causes of cancer.
 | [Dataset downloads](#dataset-downloads)
 | [Reproduce the reporting](#start-here-cpu-reporting-without-images-or-weights)
 | [Citation](CITATION.cff)
+| [Code archive: v1.0.0 DOI](https://doi.org/10.5281/zenodo.23105039)
 
 ![Workflow: three trained model-explanation pipelines, a shared image-space grid, occlusion and deletion tests, and paired uncertainty and stability analysis.](docs/assets/study-flow.svg)
 
@@ -40,9 +41,12 @@ Differences concern model-training-explanation pipelines; they do not isolate a
 causal effect of pathology pretraining.
 
 **Release status:** the code repository and demonstration website are public.
-A manuscript-associated tagged release, approved license, archive DOI, and full
-dependency lock remain pending. See `docs/RELEASE_CHECKLIST.md` before finalizing
-the publication release.
+The [v1.0.0 release](https://github.com/haocht10032/cancer_image_pathology/releases/tag/v1.0.0)
+at commit `e248c59a4094913d150b8a3652e57700d35ba38e` is archived as software at
+[DOI 10.5281/zenodo.23105039](https://doi.org/10.5281/zenodo.23105039).
+This DOI covers code and compact outputs, **not the full perturbation archive**.
+Public access to that archive, repository license approval, and a complete
+dependency lock remain pending. See `docs/RELEASE_CHECKLIST.md`.
 
 ## Main findings
 
@@ -154,10 +158,17 @@ Versions 1-4 are excluded. See `docs/PROVENANCE.md` for the public-export hash c
 
 ## Citation and rights
 
-Authors: Haochen Tan, Hanwen Henry Ye, Annie Qu. `CITATION.cff` identifies the code
-package; a manuscript DOI and release identifiers will be added when available.
+Authors: Haochen Tan, Hanwen Henry Ye, Annie Qu. Cite the software release as:
+
+Tan, H., Ye, H. H., & Qu, A. (2026). *Colorectal Histology Attribution Audit*
+(v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.23105039
+
+`CITATION.cff` identifies this archived release. A manuscript DOI will be added
+when available. Post-release documentation updates do not change the archived
+v1.0.0 snapshot.
 The repository URL is https://github.com/haocht10032/cancer_image_pathology.
 
-Third-party repositories and restricted weights are not bundled. No open-source
-license is granted by this draft; confirm ownership, author approval and third-party
-requirements before adding a license or publishing. See `docs/RIGHTS.md`.
+Third-party repositories and restricted weights are not bundled. The Zenodo
+record currently lists CC BY 4.0, which remains subject to author confirmation.
+This repository has no approved LICENSE file. Do not assume that the archive
+license covers third-party datasets or model weights. See `docs/RIGHTS.md`.

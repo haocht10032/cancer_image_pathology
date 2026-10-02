@@ -1,5 +1,18 @@
 # Publication update log
 
+## 2026-10-02 software DOI follow-up
+
+The published Zenodo software record for `v1.0.0` is
+https://doi.org/10.5281/zenodo.23105039, corresponding to GitHub commit
+`e248c59a4094913d150b8a3652e57700d35ba38e`. Its version-specific DOI is now in the
+README, citation metadata and manuscript. The following reporting update was
+archived in that release; this DOI documentation is a post-release change and
+does not move or replace the tag.
+
+The full perturbation archive remains unpublished. Zenodo currently lists CC BY
+4.0 for the software record; author confirmation of that license remains pending.
+No LICENSE was added and no archive license was changed in this follow-up.
+
 ## 2026-10-02
 
 This update synchronizes the public code and compact outputs with the finalized
@@ -19,8 +32,8 @@ archival release.
 - Kept original images, restricted pretrained weights, private correspondence,
   manuscript drafts, and large per-patch/per-step files out of GitHub.
 
-The repository and educational demonstration are public. No archive DOI or public
-download for the full perturbation files has been issued by this update. Those
+The repository and educational demonstration are public. This initial reporting
+update did not issue an archive DOI or a public download for the full perturbation files. Those
 files require a separate, checked archive. See [release tasks](RELEASE_CHECKLIST.md)
 and [large-output contents](LARGE_ARTIFACTS.md).
 
