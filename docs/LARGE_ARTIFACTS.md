@@ -1,30 +1,59 @@
-# Separate research archive
+# Public numerical results archive
 
-This repository is deliberately not a full checkpoint/data mirror. The inventory
-`provenance/large_artifacts_inventory.csv` lists excluded derived files by relative
-path, size and category. It is an inventory, not permission to redistribute each
-entry and not a downloadable archive. No DOI/download URL exists yet for these
-full perturbation files. The software DOI
-https://doi.org/10.5281/zenodo.23105039 covers the `v1.0.0` code and compact outputs
-only; it does not include the separate files listed below.
+The full recorded numerical perturbation and stability outputs are publicly
+available as dataset version `1.0.0` at
+https://doi.org/10.5281/zenodo.23143934 (published 2026-10-04).
+This is separate from the code/compact-output DOI
+https://doi.org/10.5281/zenodo.23105039.
 
-Before an archival release, select and sanitize the required final outputs:
+## Contents
 
-- Original grouped OOF and external trained checkpoints, only if redistribution
-  terms permit. Checkpoints/features containing restricted model information
-  need separate review; do not assume UNI weights are redistributable.
-- Kather consolidated attribution maps, occlusion scores and deletion curves.
-- Final CRC attribution maps, occlusion scores and deletion curves.
-- Cross-seed maps needed to recompute stability from scratch.
-- `deterministic_ties_v5/full/` partition curves with all logits, deletion indices,
-  metrics and provenance. Exclude earlier probability versions and proof runs.
-- Original run configurations and environment export, sanitized as necessary.
+- `kather_final_perturbation_outputs.zip`: final Kather revision, completed
+  sensitivities, classification, folds/cohorts, and historical supporting inputs.
+- `crc_final_perturbation_outputs.zip`: final common-seven external outputs,
+  corrected consolidated maps/curves/occlusion scores, predictions and manifests.
+- `feedback2_final_probability_deletion.zip`: final `deterministic_ties_v5/full/`
+  partition outputs, including per-step logits/probabilities, deleted patch indices,
+  provenance and frozen targets; earlier probability/proof runs are excluded.
+- `cross_seed_stability.zip`: recorded predictions, target classes, per-patch
+  maps, seed-pair metrics and final stability summaries.
+- `secondary_activation_patching_ablation.zip`: penultimate-layer,
+  within-image-mean intervention and stability outputs, not a new training loss.
+- `reproduction_context.zip`: observed runtimes, requirements and export provenance,
+  not a complete dependency lock.
 
-The inventory may include intermediate or overlapping files. Deduplicate and freeze
-a minimal approved archive; do not blindly upload every inventory entry. Keep
-numeric values and image/source identifiers consistent with the compact exports.
-Publish an archive README, file checksums, and its relationship to a tagged code
-release. Restore files at their documented project-relative paths to rerun the
-GPU replay/audit; read PROVENANCE.md before using historical hashes.
+The record also contains a README, CC BY 4.0 license, per-file manifest,
+`SHA256SUMS.txt`, and validation report. All 11 uploaded file sizes and Zenodo MD5
+checksums matched the prepared local package on 2026-10-04. The export contains
+591 numerical files and 15,979,144 CSV data rows. This is packaging validation,
+not an independent GPU reproduction or a complete rights audit.
 
-No large artifacts were moved, deleted, uploaded or repackaged by this preparation.
+## Restore and verify
+
+Download the required ZIPs and supporting files. Verify the upload-file checksums
+with `shasum -a 256 -c SHA256SUMS.txt`. Numerical ZIP members preserve `artifacts/`
+paths; extract into a separate analysis checkout at its root. The manifest's
+`published_sha256` fields validate extracted files. Inspect reproduction context
+separately rather than overwriting the repository environment records.
+
+Machine-specific paths were sanitized and numeric CSV strings were preserved
+without recomputation or rounding. Original source artifacts were not changed.
+Nested experiment hashes refer to original unsanitized bytes; use the archive
+manifest for exported-file validation. Do not disable original byte-hash replay
+guards to force these sanitized files to match an original experiment.
+
+Five existing summary tables have duplicate column labels, retained and documented
+in the manifest/report. Use image-/patch-level tables for fresh aggregation. Different
+stages have different cohorts, targets, seeds and class encodings; do not pool
+historical and final snapshots as independent samples. See the archive README.
+
+## Exclusions and limits
+
+Original images, pretrained weights, trained checkpoints, embeddings/patch tokens,
+private documents and obsolete/proof outputs are excluded. The archive supports
+reanalysis of saved outputs, not standalone GPU inference. Obtain images and
+authorized models separately; trained checkpoints must be retained or regenerated.
+
+`provenance/large_artifacts_inventory.csv` is an older candidate inventory and can
+list excluded or duplicate materials. It is not this record's content manifest or
+permission to redistribute each entry. Use the published `file_manifest.csv`.

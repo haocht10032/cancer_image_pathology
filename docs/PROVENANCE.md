@@ -16,8 +16,9 @@ historical provenance, not validation signatures for the new export.
 `Methods/Feedback2/audit_downloads.py` is for byte-identical original archives,
 with original inputs and checkpoints; it is not the verifier for sanitized files.
 Notebook 14 outputs included here are final aggregate image-seed metrics. Full
-curves with deleted indices and original partition signatures belong in the
-separate archive after its own privacy and rights review.
+curves with deleted indices and partition provenance are in the separate public
+numerical archive at https://doi.org/10.5281/zenodo.23143934. That archive has its
+own sanitization manifest; historical hashes do not validate sanitized exports.
 
 The online notebook 14 completed 99 full partitions and passed source/checkpoint/
 output hash, manifest, probability arithmetic, AUC and tie-free/random validation

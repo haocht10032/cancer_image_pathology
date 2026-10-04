@@ -1,0 +1,82 @@
+{
+  "checked_date": "2026-10-04",
+  "record_url": "https://zenodo.org/records/23143934",
+  "doi": "10.5281/zenodo.23143934",
+  "title": "Colorectal Histology Attribution Audit: Full Numerical Perturbation and Stability Outputs.",
+  "version": "1.0.0",
+  "publication_date": "2026-10-04",
+  "status": "published",
+  "state": "done",
+  "access": "open",
+  "license": "cc-by-4.0",
+  "files": [
+    {
+      "name": "feedback2_final_probability_deletion.zip",
+      "bytes": 28157924,
+      "zenodo_checksum": "md5:b967b03af6f0cd39ce036c85ca43a3e7",
+      "local_checksum_match": true
+    },
+    {
+      "name": "validation_report.json",
+      "bytes": 3371,
+      "zenodo_checksum": "md5:f841995600b0f3be649cbf332e82c2b6",
+      "local_checksum_match": true
+    },
+    {
+      "name": "file_manifest.csv",
+      "bytes": 191495,
+      "zenodo_checksum": "md5:117b796ef9861128c7a391792fde3a86",
+      "local_checksum_match": true
+    },
+    {
+      "name": "README.md",
+      "bytes": 7002,
+      "zenodo_checksum": "md5:4ddc39a22c47ada160c056caaa0452c4",
+      "local_checksum_match": true
+    },
+    {
+      "name": "crc_final_perturbation_outputs.zip",
+      "bytes": 26793573,
+      "zenodo_checksum": "md5:87db3c42959ee8f5c00d3a2c9454ede7",
+      "local_checksum_match": true
+    },
+    {
+      "name": "cross_seed_stability.zip",
+      "bytes": 48715557,
+      "zenodo_checksum": "md5:d00c08f1daeb981b4a7a971c45a62377",
+      "local_checksum_match": true
+    },
+    {
+      "name": "LICENSE-CC-BY-4.0.txt",
+      "bytes": 18657,
+      "zenodo_checksum": "md5:2ab724713fdaf49e4523c4503bfd068d",
+      "local_checksum_match": true
+    },
+    {
+      "name": "reproduction_context.zip",
+      "bytes": 1944,
+      "zenodo_checksum": "md5:1fa76b8a9c7a9d0ae307c2174563116a",
+      "local_checksum_match": true
+    },
+    {
+      "name": "secondary_activation_patching_ablation.zip",
+      "bytes": 26753473,
+      "zenodo_checksum": "md5:83635754c17997268d8aad93ea4f0bb0",
+      "local_checksum_match": true
+    },
+    {
+      "name": "SHA256SUMS.txt",
+      "bytes": 940,
+      "zenodo_checksum": "md5:0090ee8135b5328ddd67495b46d993a3",
+      "local_checksum_match": true
+    },
+    {
+      "name": "kather_final_perturbation_outputs.zip",
+      "bytes": 284932946,
+      "zenodo_checksum": "md5:6c4a030e9ec7e4ef8f4fd02b1105f02f",
+      "local_checksum_match": true
+    }
+  ],
+  "verification": "Zenodo API metadata and all declared file checksums matched local upload files; remote file payloads were not downloaded again",
+  "software_doi_unchanged": "10.5281/zenodo.23105039"
+}

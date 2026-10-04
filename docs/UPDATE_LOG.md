@@ -1,5 +1,18 @@
 # Publication update log
 
+## 2026-10-04 numerical archive publication
+
+The full numerical perturbation and stability archive, dataset version `1.0.0`,
+is public at https://doi.org/10.5281/zenodo.23143934. Its 11 uploaded file sizes and
+MD5 checksums match the prepared local package. Added the DOI to the README and
+archive/restoration documentation. Images, pretrained/trained weights, embeddings,
+private files and obsolete/proof runs remain excluded. Original experiment hashes
+are historical; exported files have their own manifest and checksums.
+
+No model, experiment, inference test or frozen numerical result was changed.
+The software `v1.0.0` DOI and tag remain unchanged. Earlier entries below describe
+the release status at their respective dates, not the current archive status.
+
 ## 2026-10-02 scoped licensing update
 
 The maintainer authorized using MIT for original project software and CC BY 4.0

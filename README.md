@@ -14,6 +14,7 @@ contribute to model predictions; they are not biological causes of cancer.
 | [Reproduce the reporting](#start-here-cpu-reporting-without-images-or-weights)
 | [Citation](CITATION.cff)
 | [Code archive: v1.0.0 DOI](https://doi.org/10.5281/zenodo.23105039)
+| [Full numerical-results archive](https://doi.org/10.5281/zenodo.23143934)
 
 ![Workflow: three trained model-explanation pipelines, a shared image-space grid, occlusion and deletion tests, and paired uncertainty and stability analysis.](docs/assets/study-flow.svg)
 
@@ -47,8 +48,10 @@ at commit `e248c59a4094913d150b8a3652e57700d35ba38e` is archived as software at
 This DOI covers code and compact outputs, **not the full perturbation archive**.
 The current repository uses MIT for original software and CC BY 4.0 for original
 content and authorized compact outputs, subject to the [licensing scope](LICENSING.md).
-Public access to the full archive and a complete dependency lock remain pending.
-See `docs/RELEASE_CHECKLIST.md` for remaining confirmation and release tasks.
+The separate [numerical-results archive, v1.0.0](https://doi.org/10.5281/zenodo.23143934)
+is public and includes full recorded perturbation and stability outputs, not images
+or checkpoints. A complete dependency lock remains pending. See
+`docs/LARGE_ARTIFACTS.md` and `docs/RELEASE_CHECKLIST.md` for scope and remaining tasks.
 
 ## Main findings
 
@@ -121,8 +124,10 @@ tracked tables; review changes before committing anything.
    The recorded runtime is in `environment/observed_gpu_runtime.json`; this is not
    a complete tested lockfile. Obtain `pip freeze` from the original runtime before
    final release.
-3. Expand the compact artifacts. Restore required large outputs/checkpoints from
-   the future archive or regenerate them using the earlier notebooks.
+3. Expand the compact artifacts. Restore recorded numerical outputs from the
+   [results archive](https://doi.org/10.5281/zenodo.23143934), following
+   `docs/LARGE_ARTIFACTS.md`. Checkpoints are not included; GPU reruns require
+   separately authorized assets and regenerated or retained trained checkpoints.
 4. Launch Jupyter from the repository root. Each notebook searches upward for this
    folder or uses `PROJECT_ROOT`. Only specify `UNI_ASSETS_DIR` for authorized local
    UNI assets; access is not bypassed.
@@ -169,6 +174,11 @@ Tan, H., Ye, H. H., & Qu, A. (2026). *Colorectal Histology Attribution Audit*
 when available. Post-release documentation updates do not change the archived
 v1.0.0 snapshot.
 The repository URL is https://github.com/haocht10032/cancer_image_pathology.
+
+Full numerical perturbation and stability outputs have a separate dataset DOI:
+[10.5281/zenodo.23143934](https://doi.org/10.5281/zenodo.23143934), version `1.0.0`.
+Cite it alongside the software archive when using those files. It does not change
+the historical software release or its DOI.
 
 Original software in the current repository is available under [MIT](LICENSE).
 Original documentation and authorized compact numerical outputs use
